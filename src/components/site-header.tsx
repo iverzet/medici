@@ -10,6 +10,7 @@ export function SiteHeader() {
       </Link>
       <nav aria-label="Navigație principală" className="flex items-center gap-5 text-sm font-medium">
         <Link href="/#orase" className="hover:text-sky-700">Găsește un specialist</Link>
+        <Link href="/blog" className="hover:text-sky-700">Blog medical</Link>
         <Link href="/pentru-clinici" className="flex items-center gap-1 hover:text-sky-700">Pentru clinici <ArrowUpRight className="size-4" aria-hidden="true" /></Link>
       </nav>
     </div>

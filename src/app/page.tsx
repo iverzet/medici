@@ -7,6 +7,7 @@ import { DoctorCard } from "@/components/doctor-card";
 import { LeadForm } from "@/components/lead-form";
 import { FAQ } from "@/components/faq";
 import { MobileContactBar } from "@/components/mobile-contact-bar";
+import { CountyMap } from "@/components/county-map";
 
 export const dynamic = "force-dynamic";
 export const metadata = pageMetadata("Găsește cei mai buni medici proctologi din orașul tău", "Găsește medici și clinici de proctologie în orașul tău. Compară serviciile și cere o programare confidențială.", "/");
@@ -32,6 +33,7 @@ export default async function Home() {
       <section id="orase" className="section-space scroll-mt-8"><p className="eyebrow">Aproape de tine</p><div className="section-heading"><h2 className="section-title">Începe cu orașul tău</h2><p className="text-sm text-slate-500">Explorează serviciile disponibile local</p></div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">{cities.map((city, index) => <Link key={city.slug} href={"/" + city.slug} className="group rounded-2xl border bg-white p-5 hover:border-sky-500"><div className="mb-8 flex justify-between"><span className="text-xs font-medium text-slate-400">0{index + 1}</span><ArrowUpRight className="size-5 text-sky-700 transition-transform group-hover:-translate-y-1" aria-hidden="true" /></div><h3 className="font-semibold">{city.cityName}</h3><p className="mt-2 text-xs text-slate-500">{doctors.filter((doctor) => doctor.city === city.cityName).length} profiluri în catalog</p></Link>)}</div>
       </section>
+      <CountyMap cities={cities} doctors={doctors} />
       <section className="pb-16"><p className="eyebrow">Explorează catalogul</p><div className="section-heading"><h2 className="section-title">Medici și clinici recomandate</h2><p className="text-xs text-slate-500">Pozițiile promovate sunt etichetate distinct</p></div>
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">{featured.map((doctor) => <DoctorCard key={doctor.id} doctor={doctor} />)}</div>
         {featured.length === 0 && <p className="rounded-xl border p-6">Nu există încă profiluri promovate. Explorează orașele pentru catalogul complet.</p>}
