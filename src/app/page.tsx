@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight, MapPin, ShieldCheck, HeartHandshake, Search, Quote } from "lucide-react";
+import { ArrowUpRight, Quote } from "lucide-react";
 import { getCities, getDoctors, demoMode } from "@/lib/catalog";
 import { pageMetadata } from "@/lib/seo";
 import { CitySelector } from "@/components/city-selector";
