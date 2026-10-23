@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUpRight, MapPin, ShieldCheck, HeartHandshake, Search, Quote } from "lucide-react";
 import { getCities, getDoctors, demoMode } from "@/lib/catalog";
 import { pageMetadata } from "@/lib/seo";
@@ -23,11 +24,7 @@ export default async function Home() {
         <div className="mt-9"><CitySelector cities={cities} /></div>
         <p className="mt-4 text-xs leading-5 text-slate-400">{cities.length} orașe · {doctors.length} profiluri{demoMode || doctors.some((doctor) => doctor.isDemo) ? " · Catalog cu date demonstrative" : ""}</p>
       </div>
-      <div className="relative flex flex-col justify-center rounded-3xl border border-white/10 bg-white/5 p-8 sm:p-10">
-        <span className="mb-8 flex size-16 items-center justify-center rounded-2xl bg-sky-300/10 text-sky-200"><HeartHandshake aria-hidden="true" className="size-9" strokeWidth={1.5} /></span>
-        <p className="text-2xl font-medium leading-9 tracking-tight">Unele conversații sunt delicate.<br />Primul pas poate fi simplu.</p>
-        <div className="mt-8 space-y-5 border-t border-white/15 pt-7">{[[ShieldCheck,"Respect pentru intimitatea ta"],[MapPin,"Caută în orașul tău"],[Search,"Informații clare, într-un singur loc"]].map(([Icon,text],index) => { const Symbol = Icon as typeof Search; return <p key={index} className="flex items-center gap-3 text-sm text-slate-200"><Symbol className="size-5 text-sky-300" aria-hidden="true" />{text as string}</p>; })}</div>
-      </div>
+      <div className="relative overflow-hidden rounded-3xl border border-orange-200 bg-[#f4e8df] p-3 text-slate-900 shadow-2xl shadow-orange-950/20"><Image src="/images/editorial-medical.png" alt="Medic într-un cabinet medical modern" width={1536} height={1024} priority className="h-full min-h-80 w-full rounded-2xl object-cover object-top" /><div className="absolute inset-x-8 bottom-8 rounded-xl bg-[#292522]/90 p-5 text-white backdrop-blur-sm"><p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-200">Un început mai simplu</p><p className="mt-2 text-xl font-medium leading-7">Informații clare pentru o conversație importantă.</p></div></div>
     </div></section>
     <div className="site-container">
       <section id="orase" className="section-space scroll-mt-8"><p className="eyebrow">Aproape de tine</p><div className="section-heading"><h2 className="section-title">Începe cu orașul tău</h2><p className="text-sm text-slate-500">Explorează serviciile disponibile local</p></div>
