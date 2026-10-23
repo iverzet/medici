@@ -9,7 +9,7 @@ import { FAQ } from "@/components/faq";
 import { MobileContactBar } from "@/components/mobile-contact-bar";
 
 export const dynamic = "force-dynamic";
-export const metadata = pageMetadata("Găsește un proctolog în orașul tău", "Explorează medici și clinici de proctologie. Informații despre servicii și tarife într-un singur loc.", "/");
+export const metadata = pageMetadata("Găsește cei mai buni medici proctologi din orașul tău", "Găsește medici și clinici de proctologie în orașul tău. Compară serviciile și cere o programare confidențială.", "/");
 
 export default async function Home() {
   const [cities, doctors] = await Promise.all([getCities(), getDoctors()]);
@@ -17,7 +17,7 @@ export default async function Home() {
   return <main id="continut">
     <section className="bg-slate-950 text-white"><div className="site-container grid gap-12 py-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20 lg:py-22">
       <div><p className="mb-6 text-xs font-semibold uppercase tracking-[0.18em] text-sky-300">Sănătatea ta merită atenție</p>
-        <h1 className="text-4xl font-semibold leading-[1.12] tracking-tight sm:text-5xl lg:text-6xl">Un specialist aproape.<br /><span className="text-sky-300">Un pas spre liniște.</span></h1>
+        <h1 className="text-4xl font-semibold leading-[1.12] tracking-tight sm:text-5xl lg:text-6xl">Găsește cei mai buni medici proctologi<br /><span className="text-sky-300">din orașul tău.</span></h1>
         <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">Găsește medici și clinici de proctologie în orașul tău. Compară opțiunile, înțelege serviciile și alege informat.</p>
         <div className="mt-9"><CitySelector cities={cities} /></div>
         <p className="mt-4 text-xs leading-5 text-slate-400">{cities.length} orașe · {doctors.length} profiluri{demoMode || doctors.some((doctor) => doctor.isDemo) ? " · Catalog cu date demonstrative" : ""}</p>
