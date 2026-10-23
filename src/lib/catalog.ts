@@ -13,10 +13,14 @@ export const getCities = cache(async (): Promise<CatalogCity[]> => {
 export const getDoctors = cache(async (): Promise<CatalogDoctor[]> => {
   if (demoMode) return seedDoctors;
   const doctors = await getDb().doctor.findMany({ orderBy: [{ isFeatured: "desc" }, { name: "asc" }] });
-  return doctors.map((doctor) => ({
-    ...doctor, rating: doctor.rating === null ? null : Number(doctor.rating),
-    services: servicesSchema.parse(doctor.services),
-  }));
+  return doctors.flatMap((doctor) => {
+    const services = servicesSchema.safeParse(doctor.services);
+    if (!services.success) {
+      console.warn(`[catalog] Ignoring doctor ${doctor.id}: invalid services JSON`);
+      return [];
+    }
+    return [{ ...doctor, rating: doctor.rating === null ? null : Number(doctor.rating), services: services.data }];
+  });
 });
 export const getCity = cache(async (slug: string) => (await getCities()).find((city) => city.slug === slug));
 export const getDoctor = cache(async (slug: string) => (await getDoctors()).find((doctor) => doctor.slug === slug));
