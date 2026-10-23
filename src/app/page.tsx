@@ -17,14 +17,14 @@ export default async function Home() {
   const [cities, doctors] = await Promise.all([getCities(), getDoctors()]);
   const featured = doctors.filter((doctor) => doctor.isFeatured);
   return <main id="continut">
-    <section className="bg-slate-950 text-white"><div className="site-container grid gap-12 py-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20 lg:py-22">
-      <div><p className="mb-6 text-xs font-semibold uppercase tracking-[0.18em] text-sky-300">Sănătatea ta merită atenție</p>
+    <section className="bg-[#f4e8df] text-[#292522]"><div className="site-container grid gap-8 py-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-16">
+      <div className="flex flex-col justify-center"><p className="mb-6 text-xs font-semibold uppercase tracking-[0.18em] text-orange-800">Sănătatea ta merită atenție</p>
         <h1 className="text-4xl font-semibold leading-[1.12] tracking-tight sm:text-5xl lg:text-6xl">Găsește medici proctologi<br /><span className="text-sky-300">în orașul tău.</span></h1>
-        <p className="mt-6 max-w-xl text-lg leading-8 text-slate-300">Găsește medici și clinici de proctologie în orașul tău. Compară opțiunile, înțelege serviciile și alege informat.</p>
+        <p className="mt-6 max-w-xl text-lg leading-8 text-stone-700">Găsește medici și clinici de proctologie în orașul tău. Compară opțiunile, înțelege serviciile și alege informat.</p>
         <div className="mt-9"><CitySelector cities={cities} /></div>
-        <p className="mt-4 text-xs leading-5 text-slate-400">{cities.length} orașe · {doctors.length} profiluri{demoMode || doctors.some((doctor) => doctor.isDemo) ? " · Catalog cu date demonstrative" : ""}</p>
+        <p className="mt-4 text-xs leading-5 text-stone-600">{cities.length} orașe · {doctors.length} profiluri{demoMode || doctors.some((doctor) => doctor.isDemo) ? " · Catalog cu date demonstrative" : ""}</p>
       </div>
-      <div className="relative overflow-hidden rounded-3xl border border-orange-200 bg-[#f4e8df] p-3 text-slate-900 shadow-2xl shadow-orange-950/20"><Image src="/images/editorial-medical.png" alt="Medic într-un cabinet medical modern" width={1536} height={1024} priority className="h-full min-h-80 w-full rounded-2xl object-cover object-top" /><div className="absolute inset-x-8 bottom-8 rounded-xl bg-[#292522]/90 p-5 text-white backdrop-blur-sm"><p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-200">Un început mai simplu</p><p className="mt-2 text-xl font-medium leading-7">Informații clare pentru o conversație importantă.</p></div></div>
+      <div className="relative order-first overflow-hidden rounded-3xl border border-orange-200 bg-[#f4e8df] p-3 text-slate-900 shadow-2xl shadow-orange-950/20 lg:order-last"><Image src="/images/editorial-medical.png" alt="Medic într-un cabinet medical modern" width={1536} height={1024} priority className="h-full min-h-80 w-full rounded-2xl object-cover object-top" /><div className="absolute inset-x-8 bottom-8 rounded-xl bg-[#292522]/90 p-5 text-white backdrop-blur-sm"><p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-200">Un început mai simplu</p><p className="mt-2 text-xl font-medium leading-7">Informații clare pentru o conversație importantă.</p></div></div>
     </div></section>
     <div className="site-container">
       <section id="orase" className="section-space scroll-mt-8"><p className="eyebrow">Aproape de tine</p><div className="section-heading"><h2 className="section-title">Începe cu orașul tău</h2><p className="text-sm text-slate-500">Explorează serviciile disponibile local</p></div>
