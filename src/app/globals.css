@@ -5,15 +5,15 @@
   --foreground: #0f172a;
   --card: #ffffff;
   --card-foreground: #0f172a;
-  --primary: #0284c7;
+  --primary: #b4532a;
   --primary-foreground: #ffffff;
   --muted: #f1f5f9;
   --muted-foreground: #475569;
-  --accent: #e0f2fe;
-  --accent-foreground: #075985;
+  --accent: #f4e8df;
+  --accent-foreground: #8f3d20;
   --border: #e2e8f0;
   --input: #cbd5e1;
-  --ring: #0284c7;
+  --ring: #b4532a;
   --destructive: #b91c1c;
   --radius: 0.75rem;
 }
@@ -48,7 +48,7 @@
   .section-space { @apply py-12 sm:py-16; }
   .section-title { @apply text-3xl font-semibold leading-tight tracking-tight sm:text-4xl; }
   .section-heading { @apply mb-7 mt-3 flex flex-wrap items-end justify-between gap-4; }
-  .eyebrow { @apply text-xs font-semibold uppercase tracking-[0.16em] text-sky-800; }
+  .eyebrow { @apply text-xs font-semibold uppercase tracking-[0.16em] text-orange-800; }
   .tag { @apply rounded-full px-2.5 py-1 text-[11px] font-semibold; }
   .field { @apply min-h-11 w-full min-w-40 rounded-lg border border-input bg-white px-3 py-2 text-sm; }
 }
