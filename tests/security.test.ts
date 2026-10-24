@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { csvCell, csvRow, sameSecret } from "../src/lib/security";
 import { leadSchema, normalizePhone, validPreferredDate, partnershipSchema } from "../src/lib/validation";
+import { isKnownMunicipality } from "../src/lib/municipalities";
 
 test("telefonul acceptă formate românești și respinge numere invalide", () => {
   for (const phone of ["0722 123 456", "+40 722 123 456", "0040722123456"]) assert.equal(normalizePhone(phone), "+40722123456");
@@ -35,4 +36,9 @@ test("parteneriatele cer email și acord explicit", () => {
   assert.equal(partnershipSchema.safeParse(data).success, true);
   assert.equal(partnershipSchema.safeParse({ ...data, consent: false }).success, false);
   assert.equal(partnershipSchema.safeParse({ ...data, email: "incorect" }).success, false);
+});
+test("lista completă de municipii acceptă cereri din afara orașelor seed", () => {
+  assert.equal(isKnownMunicipality("Sibiu"), true);
+  assert.equal(isKnownMunicipality("București"), true);
+  assert.equal(isKnownMunicipality("Oraș inventat"), false);
 });
