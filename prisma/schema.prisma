@@ -18,6 +18,24 @@ enum ProviderKind {
   CLINIC
 }
 
+enum ProviderVerification {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+enum ClaimStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ReviewStatus {
+  PENDING
+  PUBLISHED
+  REJECTED
+}
+
 model Doctor {
   id          String       @id @default(cuid())
   name        String
@@ -130,15 +148,19 @@ model Provider {
   slug           String       @unique
   kind           ProviderKind
   description    String       @db.Text
-  verification   String       @default("PENDING")
+  verification   ProviderVerification @default(PENDING)
   verifiedAt     DateTime?
   isPublished    Boolean      @default(false)
+  sourceUrl      String?
+  sourceCollectedAt DateTime?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   locations      Location[]
   specialties    ProviderSpecialty[]
   services       ProviderService[]
   credentials    Credential[]
+  claims         ClaimRequest[]
+  reviews        Review[]
 
   @@index([isPublished, verification])
 }
@@ -204,6 +226,34 @@ model Credential {
 
   @@unique([issuer, reference])
   @@index([providerId])
+}
+
+model ClaimRequest {
+  id            String      @id @default(cuid())
+  providerId    String
+  contactName   String
+  email         String
+  evidenceUrl   String?
+  status        ClaimStatus @default(PENDING)
+  reviewedAt    DateTime?
+  createdAt     DateTime    @default(now())
+  provider      Provider    @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([providerId, status])
+}
+
+model Review {
+  id            String       @id @default(cuid())
+  providerId    String
+  authorName    String
+  score         Int
+  body          String       @db.Text
+  status        ReviewStatus @default(PENDING)
+  verifiedAt    DateTime?
+  createdAt     DateTime     @default(now())
+  provider      Provider     @relation(fields: [providerId], references: [id], onDelete: Cascade)
+
+  @@index([providerId, status])
 }
 model AuditLog {
   id        String   @id @default(cuid())
