@@ -6,7 +6,7 @@ import { site } from "@/config/site";
 import { municipalities, municipalitySlug } from "@/lib/municipalities";
 import { seedCities, seedDoctors, type CatalogCity, type CatalogDoctor } from "../../prisma/seed-data";
 
-export const demoMode = process.env.DEMO_MODE === "true";
+export const demoMode = process.env.DEMO_MODE !== "false";
 const servicesSchema = z.array(z.object({ name: z.string(), price: z.number().nonnegative() }));
 const municipalityCities: CatalogCity[] = municipalities.map((cityName) => ({
   id: `municipality-${cityName}`,
