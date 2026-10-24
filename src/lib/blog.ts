@@ -1,4 +1,4 @@
-export type BlogArticle = { slug: string; title: string; excerpt: string; category: string; publishedAt: string; readTime: string; author: string; reviewedBy: string; sources: { label: string; url: string }[]; content: string[]; };
+export type BlogArticle = { slug: string; title: string; excerpt: string; category: string; publishedAt: string; readTime: string; author?: string; reviewedBy?: { name: string; title: string; registration: string }; sources: { label: string; url: string }[]; content: string[]; };
 const topics = [
   ["Când este recomandat un consult", "Semnele care merită discutate cu un specialist și cum te pregătești pentru prima vizită."],
   ["Cum te pregătești pentru consultație", "Un checklist simplu pentru o discuție mai clară și mai confortabilă cu medicul."],

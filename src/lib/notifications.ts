@@ -24,7 +24,7 @@ export async function deliverNotification(id: string) {
       headers: { Authorization: "Bearer " + process.env.RESEND_API_KEY, "Content-Type": "application/json", "Idempotency-Key": "notification/" + id },
       body: JSON.stringify({
         from: process.env.EMAIL_FROM, to: [process.env.ADMIN_EMAIL],
-        subject: lead ? "Proctologi.ro — cerere nouă de programare" : "Proctologi.ro — cerere de parteneriat",
+        subject: lead ? `${site.name} — cerere nouă de programare` : `${site.name} — cerere de parteneriat`,
         text: text.join("\n") + "\n\nAdministrare: " + site.url + "/admin/leads",
       }),
       signal: AbortSignal.timeout(10000),
