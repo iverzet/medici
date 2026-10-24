@@ -4,6 +4,8 @@
  import { useMemo, useState } from "react";
  import type { CatalogCity, CatalogDoctor } from "../../prisma/seed-data";
  import { municipalities, municipalitySlug } from "@/lib/municipalities";
+
+ const cityCoordinates: Record<string, [number, number]> = { București: [44.4268, 26.1025], "Cluj-Napoca": [46.7712, 23.6236], Timișoara: [45.7489, 21.2087], Iași: [47.1585, 27.6014], Brașov: [45.6427, 25.5887] };
  
  export function CountyMap({ cities, doctors }: { cities: CatalogCity[]; doctors: CatalogDoctor[] }) {
    const specialty = "proctologi";
@@ -11,7 +13,7 @@
    const [selected, setSelected] = useState(all[0]);
    const [search, setSearch] = useState("");
    const [locationMessage, setLocationMessage] = useState("");
-   const useLocation = () => { if (!navigator.geolocation) { setLocationMessage("Locația nu este disponibilă în acest browser."); return; } navigator.geolocation.getCurrentPosition(() => setLocationMessage("Am identificat zona. Poți alege o altă localitate mai jos."), () => setLocationMessage("Nu am putut accesa locația. Alege manual localitatea.")); };
+   const useLocation = () => { if (!navigator.geolocation) { setLocationMessage("Locația nu este disponibilă în acest browser."); return; } setLocationMessage("Cautăm specialistul cel mai apropiat…"); navigator.geolocation.getCurrentPosition(({ coords }) => { const nearest = cities.filter((item) => cityCoordinates[item.cityName]).sort((a, b) => { const distance = (city: typeof a) => { const point = cityCoordinates[city.cityName]; return point ? (point[0] - coords.latitude) ** 2 + (point[1] - coords.longitude) ** 2 : Number.POSITIVE_INFINITY; }; return distance(a) - distance(b); })[0]; if (nearest) { setSelected({ name: nearest.cityName, slug: nearest.slug }); setLocationMessage(`Am selectat ${nearest.cityName}, zona cea mai apropiată din catalog.`); } else setLocationMessage("Nu avem încă un oraș disponibil în apropiere. Alege manual localitatea."); }, () => setLocationMessage("Nu am putut accesa locația. Alege manual localitatea.")); };
    const visible = all.filter((item) => item.name.toLowerCase().includes(search.toLowerCase())).slice(0, 12);
    const city = cities.find((item) => item.slug === selected.slug);
    const matches = useMemo(() => doctors.filter((doctor) => doctor.city === city?.cityName), [city?.cityName, doctors]);
