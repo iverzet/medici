@@ -14,6 +14,8 @@ type Props = { params: Promise<{ citySlug: string }>; searchParams: Promise<Reco
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const city = await getCity((await params).citySlug);
   if (!city) return { title: "Oraș negăsit", robots: { index: false, follow: false } };
+  const doctors = (await getDoctors()).filter((doctor) => doctor.city === city.cityName && !doctor.isDemo);
+  if (doctors.length === 0) return { ...pageMetadata(city.metaTitle, city.metaDescription, "/" + city.slug), robots: { index: false, follow: false } };
   return pageMetadata(city.metaTitle, city.metaDescription, "/" + city.slug);
 }
 export default async function CityPage({ params, searchParams }: Props) {

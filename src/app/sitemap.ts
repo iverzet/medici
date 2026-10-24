@@ -8,6 +8,8 @@ export const dynamic = "force-dynamic";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!site.indexable) return [];
   const [cities, doctors] = await Promise.all([getCities(), getDoctors()]);
-  const paths = ["/", "/blog", ...blogArticles.map((article) => "/blog/" + article.slug), "/pentru-clinici", "/confidentialitate", "/termeni", ...cities.map((city) => "/" + city.slug), ...municipalities.map((name) => "/" + municipalitySlug(name, site.name.startsWith("Andrologi") ? "andrologi" : "proctologi")), ...doctors.filter((doctor) => !doctor.isDemo).map((doctor) => "/medici/" + doctor.slug)];
+  const activeCities = cities.filter((city) => doctors.some((doctor) => doctor.city === city.cityName && !doctor.isDemo));
+  const paths = ["/", "/blog", ...blogArticles.map((article) => "/blog/" + article.slug), "/pentru-clinici", "/confidentialitate", "/termeni", ...activeCities.map((city) => "/" + city.slug), ...doctors.filter((doctor) => !doctor.isDemo).map((doctor) => "/medici/" + doctor.slug)];
   return paths.map((path) => ({ url: new URL(path, site.url).href, changeFrequency: "weekly", priority: path === "/" ? 1 : 0.7 }));
 }
+
