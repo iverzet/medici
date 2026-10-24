@@ -1,4 +1,4 @@
-export type BlogArticle = { slug: string; title: string; excerpt: string; category: string; publishedAt: string; readTime: string; content: string[]; };
+export type BlogArticle = { slug: string; title: string; excerpt: string; category: string; publishedAt: string; readTime: string; author: string; reviewedBy: string; content: string[]; };
 const topics = [
   ["Când este recomandat un consult", "Semnele care merită discutate cu un specialist și cum te pregătești pentru prima vizită."],
   ["Cum te pregătești pentru consultație", "Un checklist simplu pentru o discuție mai clară și mai confortabilă cu medicul."],
@@ -22,16 +22,19 @@ const topics = [
   ["După consultație: pașii următori", "Cum urmărești recomandările și când revii cu întrebări."],
 ] as const;
 const variants = ["ghid practic", "întrebări și răspunsuri", "ce merită știut", "explicat simplu", "checklist pentru programare"] as const;
+const guidance = ["Descrie când au început simptomele, ce le agravează și ce ai încercat deja.", "Pregătește documentele relevante și o listă scurtă de întrebări pentru consultație.", "Întreabă despre opțiuni, beneficii, riscuri, costuri și semnele pentru care trebuie să revii.", "Compară specialiștii după experiență, servicii, localitate și disponibilitatea confirmată.", "Alege online doar pentru discuții potrivite; unele simptome necesită examinare la cabinet.", "Notează frecvența și intensitatea simptomelor, fără să încerci autodiagnosticarea.", "Investigațiile se recomandă individual; rezultatul trebuie interpretat împreună cu istoricul.", "Obiceiurile zilnice pot susține sănătatea, dar nu înlocuiesc evaluarea unui specialist.", "Verifică sursa și data informației înainte să iei o decizie medicală.", "Confirmă înainte de trimitere ce include consultația și cum se face programarea.", "Poți spune direct ce te îngrijorează; o conversație clară ajută medicul să te ghideze.", "Întreabă dacă tariful include controlul, investigațiile sau o eventuală reevaluare.", "O a doua opinie poate clarifica opțiunile când recomandarea sau diagnosticul rămâne neclar.", "Un jurnal simplu al simptomelor îl ajută pe medic să observe evoluția în timp.", "Trimite doar datele necesare și evită să incluzi rezultate medicale într-un formular general.", "Clinica oferă infrastructură, iar medicul oferă evaluarea; verifică cine va face consultația.", "Pentru agravare bruscă, durere severă sau sângerare importantă, sună la 112.", "Preferă surse medicale și discută orice informație online cu un specialist.", "Pregătește programarea din timp și păstrează confirmarea contactului.", "Respectă recomandările primite și contactează medicul dacă apar schimbări sau întrebări noi."] as const;
 const slugify = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 export const blogArticles: BlogArticle[] = topics.flatMap(([topic, intro], topicIndex) => variants.map((variant, variantIndex) => {
-  const title = `${topic}: ${variant}`;
-  return { slug: `${slugify(topic)}-${variantIndex + 1}`, title, excerpt: intro, category: topicIndex % 2 ? "Prima vizită" : "Ghid medical", publishedAt: `2026-${String(10 - Math.floor(topicIndex / 4)).padStart(2, "0")}-${String(20 - variantIndex).padStart(2, "0")}`, readTime: `${4 + (topicIndex + variantIndex) % 4} min`, content: [
+  const title = `${topic}? – ${variant}`;
+  return { slug: `${slugify(topic)}-${variantIndex + 1}`, title, excerpt: intro, category: topicIndex % 2 ? "Prima vizită" : "Ghid medical", publishedAt: `2026-${String(10 - Math.floor(topicIndex / 4)).padStart(2, "0")}-${String(20 - variantIndex).padStart(2, "0")}`, readTime: `${4 + (topicIndex + variantIndex) % 4} min`, author: "Redacția medicală", reviewedBy: "Revizuire editorială medicală", content: [
     `${topic} este o întrebare frecventă. Informațiile de mai jos sunt orientative și te ajută să pregătești o discuție cu un medic specialist în proctologie.`,
+    guidance[topicIndex],
     `Notează simptomele, momentul apariției și întrebările pe care le ai. Un specialist poate interpreta aceste informații împreună cu istoricul tău și poate recomanda următorii pași.`,
     "Nu trimite diagnostice sau rezultate de analize într-un formular general. Pentru simptome severe sau care se agravează rapid, apelează serviciile de urgență.",
     `Dacă vrei să discuți cu un specialist, alege orașul din catalog și trimite o cerere de contact. Cererea nu reprezintă o programare confirmată; disponibilitatea se confirmă ulterior.`,
   ] };
 }));
 export function getArticle(slug: string) { return blogArticles.find((article) => article.slug === slug); }
+
 
 
