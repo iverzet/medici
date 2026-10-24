@@ -1,7 +1,7 @@
 export const site = {
   name: "Proctologi.ro",
   email: "contact@proctologi.ro",
-  indexable: true,
+  indexable: process.env.SITE_INDEXABLE === "true",
   specialty: "proctologie",
   locale: "ro_RO",
   description: "Găsește medici și clinici de proctologie în orașul tău. Explorează serviciile și tarifele într-un singur loc.",
