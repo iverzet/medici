@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db";
 import { leadSchema, partnershipSchema, submissionSchema, normalizePhone, validPreferredDate, type ActionResult } from "@/lib/validation";
 import { consumeLimit, requestIdentity } from "@/lib/rate-limit";
 import { deliverNotification } from "@/lib/notifications";
+import { demoMode, getCities } from "@/lib/catalog";
 
 const failed = { ok: false, message: "Solicitarea nu a putut fi salvată. Încearcă din nou în câteva momente." };
 const invalid = { ok: false, message: "Verifică datele completate și acordul pentru contact." };
@@ -16,12 +17,12 @@ export async function submitLead(input: unknown, meta: unknown): Promise<ActionR
   if (!data.success || !metadata.success || metadata.data.website || !validPreferredDate(data.data.preferredDate)) return invalid;
   const { requestId, doctorId } = metadata.data;
   try {
-    if (process.env.DEMO_MODE === "true") return { ok: false, message: "Trimiterea este dezactivată în modul demonstrativ." };
+    if (demoMode) return { ok: false, message: "Trimiterea este dezactivată în modul demonstrativ." };
     const db = getDb();
     if (!(await consumeLimit("lead-ip", await requestIdentity(), 10, 900))) return { ok: false, message: "Prea multe solicitări. Te rugăm să revii peste 15 minute." };
     const existing = await db.lead.findUnique({ where: { submissionKey: requestId }, select: { id: true } });
     if (existing) return success(existing.id);
-    if (!(await db.cityPage.findUnique({ where: { cityName: data.data.city } }))) return invalid;
+    if (!(await getCities()).some((city) => city.cityName === data.data.city)) return invalid;
     if (doctorId) {
       const doctor = await db.doctor.findUnique({ where: { id: doctorId } });
       if (!doctor || doctor.isDemo || doctor.city !== data.data.city) return { ok: false, message: "Profilul ales nu poate primi programări. Folosește formularul general pentru orașul tău." };
@@ -55,12 +56,12 @@ export async function submitPartnership(input: unknown, meta: unknown): Promise<
   const metadata = submissionSchema.safeParse(meta);
   if (!data.success || !metadata.success || metadata.data.website) return invalid;
   try {
-    if (process.env.DEMO_MODE === "true") return { ok: false, message: "Trimiterea este dezactivată în modul demonstrativ." };
+    if (demoMode) return { ok: false, message: "Trimiterea este dezactivată în modul demonstrativ." };
     const db = getDb();
     if (!(await consumeLimit("partner-ip", await requestIdentity(), 5, 900))) return { ok: false, message: "Prea multe solicitări. Revino peste 15 minute." };
     const existing = await db.partnershipRequest.findUnique({ where: { submissionKey: metadata.data.requestId } });
     if (existing) return success(existing.id);
-    if (!(await db.cityPage.findUnique({ where: { cityName: data.data.city } }))) return invalid;
+    if (!(await getCities()).some((city) => city.cityName === data.data.city)) return invalid;
     const { clinicName, city, contactName, phone, email } = data.data;
     const fields = { clinicName, city, contactName, phone, email };
     const entry = await db.partnershipRequest.create({
