@@ -34,7 +34,7 @@ export const getDoctors = cache(async (): Promise<CatalogDoctor[]> => {
   if (demoMode) return seedDoctors;
   let doctors;
   try {
-    doctors = await getDb().doctor.findMany({ orderBy: [{ isFeatured: "desc" }, { name: "asc" }] });
+    doctors = await getDb().doctor.findMany({ where: { isDemo: false }, orderBy: [{ isFeatured: "desc" }, { name: "asc" }] });
   } catch (error) {
     console.warn("[catalog] Database unavailable, serving no profiles", error);
     return [];
