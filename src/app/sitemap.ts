@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { getCities, getDoctors } from "@/lib/catalog";
 import { site } from "@/config/site";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!site.indexable) return [];
   const [cities, doctors] = await Promise.all([getCities(), getDoctors()]);
