@@ -9,7 +9,7 @@ import { LeadForm } from "@/components/lead-form";
 import { MobileContactBar } from "@/components/mobile-contact-bar";
 import { site } from "@/config/site";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 type Props = { params: Promise<{ citySlug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const city = await getCity((await params).citySlug);
@@ -47,3 +47,4 @@ export default async function CityPage({ params, searchParams }: Props) {
     <MobileContactBar />
   </main>;
 }
+

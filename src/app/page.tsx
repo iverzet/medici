@@ -10,7 +10,7 @@ import { FAQ } from "@/components/faq";
 import { MobileContactBar } from "@/components/mobile-contact-bar";
 import { CountyMap } from "@/components/county-map";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 export const metadata = pageMetadata("Găsește medici proctologi în orașul tău", "Găsește medici și clinici de proctologie în orașul tău. Compară serviciile și cere o programare confidențială.", "/");
 
 export default async function Home() {
@@ -42,3 +42,4 @@ export default async function Home() {
     </div><MobileContactBar />
   </main>;
 }
+

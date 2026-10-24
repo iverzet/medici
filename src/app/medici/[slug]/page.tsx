@@ -8,7 +8,7 @@ import { LeadForm } from "@/components/lead-form";
 import { MobileContactBar } from "@/components/mobile-contact-bar";
 import { site } from "@/config/site";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const doctor = await getDoctor((await params).slug);
@@ -38,3 +38,4 @@ export default async function DoctorPage({ params }: Props) {
     <MobileContactBar phone={doctor.isDemo ? undefined : doctor.phone} />
   </main>;
 }
+

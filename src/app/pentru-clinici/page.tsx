@@ -3,7 +3,7 @@ import { getCities } from "@/lib/catalog";
 import { pageMetadata } from "@/lib/seo";
 import { PartnershipForm } from "@/components/partnership-form";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 300;
 export const metadata = pageMetadata("Parteneriate pentru clinici și medici", "Prezintă serviciile clinicii tale pe Proctologi.ro. Descoperă opțiunile de listare și modelul de parteneriat.", "/pentru-clinici");
 export default async function ClinicsPage() {
   const cities = await getCities();
@@ -14,3 +14,4 @@ export default async function ClinicsPage() {
     <section className="grid items-start gap-10 lg:grid-cols-2"><div><p className="eyebrow">Construim împreună</p><h2 className="section-title">Un parteneriat clar,<br />de la prima conversație.</h2><p className="mt-6 leading-8 text-slate-600">Trimite cererea pentru a discuta un parteneriat. Condițiile de listare, costurile și preluarea solicitărilor vor fi stabilite individual. Nu garantăm un număr de pacienți sau de programări.</p><p className="mt-5 text-sm leading-7 text-slate-500">Datele pacienților nu sunt publice. Accesul partenerilor la solicitări va fi limitat la scopul pentru care pacientul a cerut contactul.</p></div><PartnershipForm cities={cities.map((city) => city.cityName)} /></section>
   </div></main>;
 }
+
