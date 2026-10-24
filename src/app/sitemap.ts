@@ -2,7 +2,6 @@ import type { MetadataRoute } from "next";
 import { getCities, getDoctors } from "@/lib/catalog";
 import { site } from "@/config/site";
 import { blogArticles } from "@/lib/blog";
-import { municipalities, municipalitySlug } from "@/lib/municipalities";
 
 export const dynamic = "force-dynamic";
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

@@ -3,6 +3,11 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   turbopack: { root: process.cwd() },
+  async redirects() {
+    return [
+      { source: "/proctologi-cluj", destination: "/proctologi-cluj-napoca", permanent: true },
+    ];
+  },
   async headers() {
     return [{ source: "/(.*)", headers: [
       { key: "Content-Security-Policy", value: "default-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; frame-src https://www.google.com https://www.openstreetmap.org; connect-src 'self' https:;" },
