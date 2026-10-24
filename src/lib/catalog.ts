@@ -26,8 +26,8 @@ export const getCities = cache(async (): Promise<CatalogCity[]> => {
   try {
     return withMunicipalities(await getDb().cityPage.findMany({ orderBy: { cityName: "asc" } }));
   } catch (error) {
-    console.warn("[catalog] Database unavailable, using seed cities", error);
-    return withMunicipalities(seedCities);
+    console.warn("[catalog] Database unavailable, serving municipality directory without profiles", error);
+    return withMunicipalities([]);
   }
 });
 export const getDoctors = cache(async (): Promise<CatalogDoctor[]> => {
@@ -36,8 +36,8 @@ export const getDoctors = cache(async (): Promise<CatalogDoctor[]> => {
   try {
     doctors = await getDb().doctor.findMany({ orderBy: [{ isFeatured: "desc" }, { name: "asc" }] });
   } catch (error) {
-    console.warn("[catalog] Database unavailable, using seed doctors", error);
-    return seedDoctors;
+    console.warn("[catalog] Database unavailable, serving no profiles", error);
+    return [];
   }
   return doctors.flatMap((doctor) => {
     const services = servicesSchema.safeParse(doctor.services);
