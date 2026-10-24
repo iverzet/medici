@@ -6,13 +6,15 @@ export async function GET(request: Request) {
   if (!process.env.CRON_SECRET || request.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  const db = getDb();
   const cutoff = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
   const [leads, partnerships] = await Promise.all([
-    getDb().lead.deleteMany({ where: { status: "COMPLETED", createdAt: { lt: cutoff } } }),
-    getDb().partnershipRequest.deleteMany({ where: { status: "COMPLETED", createdAt: { lt: cutoff } } }),
+    db.lead.deleteMany({ where: { status: "COMPLETED", createdAt: { lt: cutoff } } }),
+    db.partnershipRequest.deleteMany({ where: { status: "COMPLETED", createdAt: { lt: cutoff } } }),
   ]);
+  if (leads.count || partnerships.count) await db.auditLog.create({ data: { action: "RETENTION_DELETE", targetType: "retention", targetId: `${cutoff.toISOString()}:${leads.count}:${partnerships.count}` } });
   const retryBefore = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  const notifications = await getDb().notification.findMany({
+  const notifications = await db.notification.findMany({
     where: {
       status: { in: ["PENDING", "FAILED"] },
       attempts: { lt: 5 },
