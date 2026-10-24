@@ -17,6 +17,7 @@ Node.js 24, npm. Rulează `npm ci`, copiază `.env.example` în `.env.local` și
 
 - `npm run db:migrate` — aplică migrațiile versionate.
 - `npm run db:seed` — necesită temporar `ALLOW_DEMO_SEED=true`; nu rulează automat la build.
+- `npm run db:import-public-providers` — necesită temporar `ALLOW_PUBLIC_PROVIDER_IMPORT=true`; importă numai candidați nepublicați din surse oficiale.
 - `npm test` — validare, date calendaristice, acord, CSV și verificarea secretului.
 - `npm run lint`
 - `npm run type-check`
@@ -30,7 +31,9 @@ Pentru verificarea integrată, după build și pornirea serverului local, seteaz
 
 Proiect Vercel: `invitatii/medici`. Neon `medici-db`, regiune Frankfurt. Configurația Prisma încarcă mediul prin `@next/env`; migrațiile preferă `DIRECT_URL`, apoi `DATABASE_URL_UNPOOLED`, apoi `DATABASE_URL`. Serverul folosește conexiunea cu pooling.
 
-Cu `DEMO_MODE=false`, catalogul citește PostgreSQL și erorile sunt afișate explicit. `DEMO_MODE=true` activează catalogul local fără bază de date și dezactivează trimiterea formularelor. Seed-ul folosește tranzacție și upsert, refuză suprascrierea profilurilor reale și nu șterge cereri. Revino la `ALLOW_DEMO_SEED=false` după populare.
+Cu `DEMO_MODE=false`, catalogul citește PostgreSQL; dacă baza de date nu este disponibilă, nu servește profiluri demonstrative. `DEMO_MODE=true` activează catalogul local fără bază de date și dezactivează trimiterea formularelor. Seed-ul folosește tranzacție și upsert, refuză suprascrierea profilurilor reale și nu șterge cereri. Revino la `ALLOW_DEMO_SEED=false` după populare.
+
+Importul de surse publice păstrează URL-ul și data colectării, dar creează numai furnizori `PENDING` și nepublicați. Publicarea, revendicarea profilului și recenziile se fac după verificare administrativă.
 
 Orașe: `/proctologi-bucuresti`, `/proctologi-cluj`, `/proctologi-timisoara`, `/proctologi-iasi`, `/proctologi-brasov`. Exemplu de profil: `/medici/demo-medic-bucuresti`. Datele fictive nu generează entități medicale în JSON-LD și sunt excluse din sitemap. Nu există apeluri sau hărți pentru adrese fictive.
 
@@ -44,7 +47,7 @@ Configurează `RESEND_API_KEY`, `EMAIL_FROM` pe un domeniu verificat și `ADMIN_
 
 Planul gratuit Resend din Vercel Marketplace nu este disponibil pentru acest cont; nu a fost activat un abonament plătit. Se poate configura un cont Resend direct gratuit sau un serviciu SMTP existent. Redirecționarea emailului de contact este separată de trimiterea alertelor automate.
 
-Identitatea publică este centralizată în `src/config/site.ts`. Nu publica date de firmă inventate. Gestionarea drepturilor și eliminarea datelor sunt operații administrative; nu există încă ștergere automată după un termen fix. Nu stoca diagnostice sau documente medicale în acest portal.
+Identitatea publică este centralizată în `src/config/site.ts`. Nu publica date de firmă inventate. Jobul zilnic protejat de `CRON_SECRET` elimină cererile finalizate după 90 de zile și reîncearcă notificările email eșuate. Nu stoca diagnostice sau documente medicale în acest portal.
 
 ## Dependențe
 

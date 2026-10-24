@@ -12,7 +12,8 @@
     "db:generate": "prisma generate",
     "db:validate": "prisma validate",
     "db:migrate": "prisma migrate deploy",
-    "db:seed": "prisma db seed"
+    "db:seed": "prisma db seed",
+    "db:import-public-providers": "tsx prisma/import-public-providers.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.2",
