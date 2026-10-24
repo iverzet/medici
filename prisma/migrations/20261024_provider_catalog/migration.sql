@@ -6,7 +6,9 @@ CREATE TYPE "ReviewStatus" AS ENUM ('PENDING', 'PUBLISHED', 'REJECTED');
 ALTER TABLE "Provider"
   ADD COLUMN "sourceUrl" TEXT,
   ADD COLUMN "sourceCollectedAt" TIMESTAMP(3),
-  ALTER COLUMN "verification" TYPE "ProviderVerification" USING "verification"::"ProviderVerification";
+  ALTER COLUMN "verification" DROP DEFAULT,
+  ALTER COLUMN "verification" TYPE "ProviderVerification" USING "verification"::"ProviderVerification",
+  ALTER COLUMN "verification" SET DEFAULT 'PENDING';
 
 CREATE TABLE "ClaimRequest" (
   "id" TEXT NOT NULL,
