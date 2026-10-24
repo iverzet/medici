@@ -1,4 +1,4 @@
-export type BlogArticle = { slug: string; title: string; excerpt: string; category: string; publishedAt: string; readTime: string; author: string; reviewedBy: string; content: string[]; };
+export type BlogArticle = { slug: string; title: string; excerpt: string; category: string; publishedAt: string; readTime: string; author: string; reviewedBy: string; sources: { label: string; url: string }[]; content: string[]; };
 const topics = [
   ["Când este recomandat un consult", "Semnele care merită discutate cu un specialist și cum te pregătești pentru prima vizită."],
   ["Cum te pregătești pentru consultație", "Un checklist simplu pentru o discuție mai clară și mai confortabilă cu medicul."],
@@ -26,7 +26,7 @@ const guidance = ["Descrie când au început simptomele, ce le agravează și ce
 const slugify = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 export const blogArticles: BlogArticle[] = topics.flatMap(([topic, intro], topicIndex) => variants.map((variant, variantIndex) => {
   const title = `${topic}? – ${variant}`;
-  return { slug: `${slugify(topic)}-${variantIndex + 1}`, title, excerpt: intro, category: topicIndex % 2 ? "Prima vizită" : "Ghid medical", publishedAt: `2026-${String(10 - Math.floor(topicIndex / 4)).padStart(2, "0")}-${String(20 - variantIndex).padStart(2, "0")}`, readTime: `${4 + (topicIndex + variantIndex) % 4} min`, author: "Redacția medicală", reviewedBy: "Revizuire editorială medicală", content: [
+  return { slug: `${slugify(topic)}-${variantIndex + 1}`, title, excerpt: intro, category: topicIndex % 2 ? "Prima vizită" : "Ghid medical", publishedAt: `2026-${String(10 - Math.floor(topicIndex / 4)).padStart(2, "0")}-${String(20 - variantIndex).padStart(2, "0")}`, readTime: `${4 + (topicIndex + variantIndex) % 4} min`, author: "Redacția medicală", reviewedBy: "Revizuire editorială medicală", sources: [{ label: "NIDDK – informații pentru pacienți", url: "https://www.niddk.nih.gov/health-information" }, { label: "NHS – ghiduri pentru pacienți", url: "https://www.nhs.uk/conditions/" }], content: [
     `${topic} este o întrebare frecventă. Informațiile de mai jos sunt orientative și te ajută să pregătești o discuție cu un medic specialist în proctologie.`,
     guidance[topicIndex],
     `Notează simptomele, momentul apariției și întrebările pe care le ai. Un specialist poate interpreta aceste informații împreună cu istoricul tău și poate recomanda următorii pași.`,
