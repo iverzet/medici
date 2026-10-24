@@ -28,8 +28,9 @@ export async function changeStatus(form: FormData) {
   const parsed = z.object({ id: z.string().min(1).max(100), type: z.enum(["lead", "partner"]), status: z.enum(["NEW", "CONTACTED", "COMPLETED"]) }).safeParse(Object.fromEntries(form));
   if (!parsed.success) redirect("/admin/leads?notice=invalid");
   try {
-    if (parsed.data.type === "lead") await getDb().lead.update({ where: { id: parsed.data.id }, data: { status: parsed.data.status } });
-    else await getDb().partnershipRequest.update({ where: { id: parsed.data.id }, data: { status: parsed.data.status } });
+    const closedAt = parsed.data.status === "COMPLETED" ? new Date() : null;
+    if (parsed.data.type === "lead") await getDb().lead.update({ where: { id: parsed.data.id }, data: { status: parsed.data.status, closedAt } });
+    else await getDb().partnershipRequest.update({ where: { id: parsed.data.id }, data: { status: parsed.data.status, closedAt } });
     await getDb().auditLog.create({ data: { action: "status_change", targetId: parsed.data.id, targetType: parsed.data.type } });
   } catch { redirect("/admin/leads?notice=failed"); }
   revalidatePath("/admin/leads");
@@ -42,4 +43,17 @@ export async function retryNotification(form: FormData) {
   try { await deliverNotification(id); await getDb().auditLog.create({ data: { action: "notification_retry", targetId: id, targetType: "notification" } }); } catch { redirect("/admin/leads?notice=failed"); }
   revalidatePath("/admin/leads");
   redirect("/admin/leads?notice=retried");
+}
+export async function publishProvider(form: FormData) {
+  await requireAdmin();
+  const parsed = z.object({ id: z.string().min(1).max(100), action: z.enum(["publish", "unpublish"]) }).safeParse(Object.fromEntries(form));
+  if (!parsed.success) redirect("/admin/providers?notice=invalid");
+  try {
+    const published = parsed.data.action === "publish";
+    await getDb().provider.update({ where: { id: parsed.data.id }, data: { isPublished: published, verification: published ? "VERIFIED" : "PENDING", verifiedAt: published ? new Date() : null } });
+    await getDb().auditLog.create({ data: { action: published ? "provider_publish" : "provider_unpublish", targetId: parsed.data.id, targetType: "provider" } });
+  } catch { redirect("/admin/providers?notice=failed"); }
+  revalidatePath("/");
+  revalidatePath("/admin/providers");
+  redirect("/admin/providers?notice=updated");
 }

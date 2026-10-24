@@ -25,8 +25,8 @@ export async function submitLead(input: unknown, meta: unknown): Promise<ActionR
     if (existing) return success(existing.id);
     if (!isKnownMunicipality(data.data.city)) return invalid;
     if (doctorId) {
-      const doctor = await db.doctor.findUnique({ where: { id: doctorId } });
-      if (!doctor || doctor.isDemo || doctor.city !== data.data.city) return { ok: false, message: "Profilul ales nu poate primi programări. Folosește formularul general pentru orașul tău." };
+      const provider = await db.provider.findUnique({ where: { id: doctorId }, include: { locations: { where: { city: data.data.city }, take: 1 } } });
+      if (!provider || !provider.isPublished || provider.verification !== "VERIFIED" || provider.locations.length === 0) return { ok: false, message: "Profilul ales nu poate primi programări. Folosește formularul general pentru orașul tău." };
     }
     const phone = normalizePhone(data.data.patientPhone);
     if (!(await consumeLimit("lead-phone", phone, 3, 3600))) return { ok: false, message: "Ai trimis deja mai multe solicitări. Te rugăm să revii mai târziu." };
@@ -35,7 +35,7 @@ export async function submitLead(input: unknown, meta: unknown): Promise<ActionR
         submissionKey: requestId, patientName: data.data.patientName, patientPhone: phone,
         patientEmail: data.data.patientEmail || null, city: data.data.city,
         preferredDate: data.data.preferredDate ? new Date(data.data.preferredDate + "T12:00:00Z") : null,
-        message: data.data.message || null, doctorId: doctorId || null,
+        message: data.data.message || null, providerId: doctorId || null,
         consentAt: new Date(), consentVersion: "2026-10-23", notification: { create: {} },
       }, include: { notification: true },
     });

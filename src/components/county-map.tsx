@@ -1,20 +1,23 @@
  "use client";
  
  import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
  import type { CatalogCity, CatalogDoctor } from "../../prisma/seed-data";
  import { municipalities, municipalitySlug } from "@/lib/municipalities";
 
- const cityCoordinates: Record<string, [number, number]> = { București: [44.4268, 26.1025], "Cluj-Napoca": [46.7712, 23.6236], Timișoara: [45.7489, 21.2087], Iași: [47.1585, 27.6014], Brașov: [45.6427, 25.5887] };
+const cityCoordinates: Record<string, [number, number]> = { București: [44.4268, 26.1025], "Cluj-Napoca": [46.7712, 23.6236], Timișoara: [45.7489, 21.2087], Iași: [47.1585, 27.6014], Brașov: [45.6427, 25.5887] };
+function savedCitySlug() { return decodeURIComponent(document.cookie.match(/(?:^|; )specialist-city=([^;]+)/)?.[1] || ""); }
+function subscribeToCity(onStoreChange: () => void) { window.addEventListener("specialist-city-change", onStoreChange); return () => window.removeEventListener("specialist-city-change", onStoreChange); }
  
  export function CountyMap({ cities, doctors }: { cities: CatalogCity[]; doctors: CatalogDoctor[] }) {
    const specialty = "proctologi";
    const all = useMemo(() => municipalities.map((name) => ({ name, slug: municipalitySlug(name, specialty) })), [specialty]);
-   const [selected, setSelected] = useState(all[0]);
-   useEffect(() => { const saved = document.cookie.match(/(?:^|; )specialist-city=([^;]+)/)?.[1]; const savedCity = all.find((item) => item.slug === decodeURIComponent(saved || "")); if (savedCity) setSelected(savedCity); }, [all]);
+   const savedSlug = useSyncExternalStore(subscribeToCity, savedCitySlug, () => "");
+   const [selectedSlug, setSelectedSlug] = useState<string | null>(null);
+   const selected = all.find((item) => item.slug === (selectedSlug || savedSlug)) || all[0];
    const [search, setSearch] = useState("");
    const [locationMessage, setLocationMessage] = useState("");
-   const selectCity = (item: typeof all[number]) => { setSelected(item); if (document.cookie.includes("cookie-consent=accepted")) document.cookie = `specialist-city=${encodeURIComponent(item.slug)}; Max-Age=2592000; Path=/; SameSite=Lax`; };
+   const selectCity = (item: typeof all[number]) => { setSelectedSlug(item.slug); if (document.cookie.includes("cookie-consent=accepted")) { document.cookie = `specialist-city=${encodeURIComponent(item.slug)}; Max-Age=2592000; Path=/; SameSite=Lax${window.location.protocol === "https:" ? "; Secure" : ""}`; window.dispatchEvent(new Event("specialist-city-change")); } };
    const useLocation = () => { if (!navigator.geolocation) { setLocationMessage("Locația nu este disponibilă în acest browser."); return; } setLocationMessage("Căutăm specialistul cel mai apropiat…"); navigator.geolocation.getCurrentPosition(({ coords }) => { const nearest = cities.filter((item) => cityCoordinates[item.cityName]).sort((a, b) => { const distance = (city: typeof a) => { const point = cityCoordinates[city.cityName]; return point ? (point[0] - coords.latitude) ** 2 + (point[1] - coords.longitude) ** 2 : Number.POSITIVE_INFINITY; }; return distance(a) - distance(b); })[0]; const option = nearest && all.find((item) => item.slug === nearest.slug); if (nearest && option) { selectCity(option); setLocationMessage(`Am selectat ${nearest.cityName}, zona cea mai apropiată din catalog.`); } else setLocationMessage("Nu avem încă un oraș disponibil în apropiere. Alege manual localitatea."); }, () => setLocationMessage("Nu am putut accesa locația. Alege manual localitatea.")); };
    const visible = all.filter((item) => item.name.toLowerCase().includes(search.toLowerCase())).slice(0, 12);
    const city = cities.find((item) => item.slug === selected.slug);

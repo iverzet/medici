@@ -69,7 +69,10 @@ model Lead {
   message        String?    @db.Text
   doctorId       String?
   doctor         Doctor?    @relation(fields: [doctorId], references: [id], onDelete: SetNull)
+  providerId     String?
+  provider       Provider?  @relation(fields: [providerId], references: [id], onDelete: SetNull)
   status         LeadStatus @default(NEW)
+  closedAt       DateTime?
   consentAt      DateTime
   consentVersion String
   createdAt      DateTime   @default(now())
@@ -77,6 +80,8 @@ model Lead {
 
   @@index([status, createdAt])
   @@index([doctorId])
+  @@index([providerId])
+  @@index([closedAt])
 }
 
 model CityPage {
@@ -97,11 +102,13 @@ model PartnershipRequest {
   phone         String
   email         String
   status        LeadStatus @default(NEW)
+  closedAt      DateTime?
   consentAt     DateTime
   createdAt     DateTime   @default(now())
   notification  Notification?
 
   @@index([status, createdAt])
+  @@index([closedAt])
 }
 
 model AdminSession {
@@ -161,6 +168,7 @@ model Provider {
   credentials    Credential[]
   claims         ClaimRequest[]
   reviews        Review[]
+  leads          Lead[]
 
   @@index([isPublished, verification])
 }
@@ -210,6 +218,10 @@ model Service {
 model ProviderService {
   providerId String
   serviceId  String
+  duration  Int?
+  minPrice  Decimal? @db.Decimal(10, 2)
+  maxPrice  Decimal? @db.Decimal(10, 2)
+  currency  String   @default("RON")
   provider   Provider @relation(fields: [providerId], references: [id], onDelete: Cascade)
   service    Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 

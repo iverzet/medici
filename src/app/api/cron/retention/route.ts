@@ -8,11 +8,12 @@ export async function GET(request: Request) {
   }
   const db = getDb();
   const cutoff = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
+  const retentionWhere = { OR: [{ closedAt: { lt: cutoff } }, { closedAt: null, createdAt: { lt: cutoff } }] };
   const [leads, partnerships] = await Promise.all([
-    db.lead.deleteMany({ where: { status: "COMPLETED", createdAt: { lt: cutoff } } }),
-    db.partnershipRequest.deleteMany({ where: { status: "COMPLETED", createdAt: { lt: cutoff } } }),
+    db.lead.deleteMany({ where: retentionWhere }),
+    db.partnershipRequest.deleteMany({ where: retentionWhere }),
   ]);
-  if (leads.count || partnerships.count) await db.auditLog.create({ data: { action: "RETENTION_DELETE", targetType: "retention", targetId: `${cutoff.toISOString()}:${leads.count}:${partnerships.count}` } });
+  await db.auditLog.create({ data: { action: "RETENTION_RUN", targetType: "retention", targetId: `${cutoff.toISOString()}:${leads.count}:${partnerships.count}` } });
   const retryBefore = new Date(Date.now() - 24 * 60 * 60 * 1000);
   const notifications = await db.notification.findMany({
     where: {
