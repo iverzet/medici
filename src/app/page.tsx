@@ -16,7 +16,7 @@ export const metadata = pageMetadata("Găsește medici proctologi în orașul t�
 export default async function Home() {
   const [cities, doctors] = await Promise.all([getCities(), getDoctors()]);
   const featured = doctors.filter((doctor) => doctor.isFeatured);
-  return <main id="continut">
+  return <main id="continut" className="pb-24 md:pb-0">
     <section className="bg-[#f4e8df] text-[#292522]"><div className="site-container grid gap-8 py-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-16">
       <div className="flex flex-col justify-center"><p className="mb-6 text-xs font-semibold uppercase tracking-[0.18em] text-orange-800">Sănătatea ta merită atenție</p>
         <h1 className="text-4xl font-semibold leading-[1.12] tracking-tight sm:text-5xl lg:text-6xl">Găsește medici proctologi<br /><span className="text-sky-300">în orașul tău.</span></h1>

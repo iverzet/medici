@@ -20,7 +20,7 @@ export default async function DoctorPage({ params }: Props) {
   if (!doctor) notFound();
   const city = cities.find((item) => item.cityName === doctor.city);
   const Icon = doctor.kind === "DOCTOR" ? Stethoscope : Building2;
-  return <main id="continut" className="site-container">
+  return <main id="continut" className="site-container pb-24 md:pb-0">
     <nav aria-label="Fir de navigare" className="flex flex-wrap gap-2 py-7 text-sm text-slate-600"><Link href="/">Acasă</Link><span aria-hidden="true">/</span>{city && <><Link href={"/" + city.slug}>{city.cityName}</Link><span aria-hidden="true">/</span></>}<span>Profil</span></nav>
     {doctor.isDemo && <div className="mb-7 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-900"><strong>Profil demonstrativ.</strong> Toate datele sunt fictive. Acest profil nu reprezintă un medic sau o clinică reală și nu primește programări.</div>}
     <section className="flex flex-col gap-6 rounded-3xl bg-sky-50 p-7 sm:flex-row sm:items-center sm:p-10">

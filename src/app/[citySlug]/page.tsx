@@ -28,7 +28,7 @@ export default async function CityPage({ params, searchParams }: Props) {
   const service = typeof query.serviciu === "string" ? query.serviciu : "";
   const filtered = filterDoctors(cityDoctors, kind, service);
   const realDoctors = cityDoctors.filter((doctor) => !doctor.isDemo);
-  return <main id="continut">
+  return <main id="continut" className="pb-24 md:pb-0">
     <section className="border-b bg-sky-50"><div className="site-container py-12 sm:py-16">
       <nav aria-label="Fir de navigare" className="mb-6 text-sm text-slate-600"><Link href="/">Acasă</Link><span aria-hidden="true"> / </span><span>{city.cityName}</span></nav>
       <p className="eyebrow">Specialiști în orașul tău</p><h1 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">Proctologi și clinici de proctologie în {city.cityName}</h1>
