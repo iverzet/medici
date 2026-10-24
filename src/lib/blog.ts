@@ -26,10 +26,12 @@ const slugify = (value: string) => value.normalize("NFD").replace(/[\\u0300-\\u0
 export const blogArticles: BlogArticle[] = topics.flatMap(([topic, intro], topicIndex) => variants.map((variant, variantIndex) => {
   const title = `${topic}: ${variant}`;
   return { slug: `${slugify(topic)}-${variantIndex + 1}`, title, excerpt: intro, category: topicIndex % 2 ? "Prima vizită" : "Ghid medical", publishedAt: `2026-${String(10 - Math.floor(topicIndex / 4)).padStart(2, "0")}-${String(20 - variantIndex).padStart(2, "0")}`, readTime: `${4 + (topicIndex + variantIndex) % 4} min`, content: [
-    `${topic} este o întrebare frecventă. Informațiile de mai jos sunt orientative și te ajută să pregătești o discuție cu un medic proctologie.`,
+    `${topic} este o întrebare frecventă. Informațiile de mai jos sunt orientative și te ajută să pregătești o discuție cu un medic specialist în proctologie.`,
     `Notează simptomele, momentul apariției și întrebările pe care le ai. Un specialist poate interpreta aceste informații împreună cu istoricul tău și poate recomanda următorii pași.`,
     "Nu trimite diagnostice sau rezultate de analize într-un formular general. Pentru simptome severe sau care se agravează rapid, apelează serviciile de urgență.",
     `Dacă vrei să discuți cu un specialist, alege orașul din catalog și trimite o cerere de contact. Cererea nu reprezintă o programare confirmată; disponibilitatea se confirmă ulterior.`,
   ] };
 }));
 export function getArticle(slug: string) { return blogArticles.find((article) => article.slug === slug); }
+
+
