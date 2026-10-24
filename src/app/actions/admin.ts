@@ -30,6 +30,7 @@ export async function changeStatus(form: FormData) {
   try {
     if (parsed.data.type === "lead") await getDb().lead.update({ where: { id: parsed.data.id }, data: { status: parsed.data.status } });
     else await getDb().partnershipRequest.update({ where: { id: parsed.data.id }, data: { status: parsed.data.status } });
+    await getDb().auditLog.create({ data: { action: "status_change", targetId: parsed.data.id, targetType: parsed.data.type } });
   } catch { redirect("/admin/leads?notice=failed"); }
   revalidatePath("/admin/leads");
   redirect("/admin/leads?notice=updated");
@@ -38,7 +39,7 @@ export async function retryNotification(form: FormData) {
   await requireAdmin();
   const id = form.get("id");
   if (typeof id !== "string" || id.length > 100) redirect("/admin/leads?notice=invalid");
-  try { await deliverNotification(id); } catch { redirect("/admin/leads?notice=failed"); }
+  try { await deliverNotification(id); await getDb().auditLog.create({ data: { action: "notification_retry", targetId: id, targetType: "notification" } }); } catch { redirect("/admin/leads?notice=failed"); }
   revalidatePath("/admin/leads");
   redirect("/admin/leads?notice=retried");
 }

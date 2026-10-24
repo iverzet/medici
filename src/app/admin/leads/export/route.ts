@@ -5,7 +5,7 @@ import { csvRow } from "@/lib/security";
 export const dynamic = "force-dynamic";
 export async function GET() {
   if (!(await isAdmin())) return new Response("Autentificare necesară.", { status: 401, headers: { "Cache-Control": "no-store" } });
-  const encoder = new TextEncoder();
+  await getDb().auditLog.create({ data: { action: "csv_export", targetType: "lead" } });\n  const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
       try {
@@ -23,3 +23,4 @@ export async function GET() {
   });
   return new Response(stream, { headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": 'attachment; filename="programari.csv"', "Cache-Control": "private, no-store", "X-Content-Type-Options": "nosniff" } });
 }
+
