@@ -6,7 +6,7 @@ export function DoctorCard({ doctor }: { doctor: CatalogDoctor }) {
   const Icon = doctor.kind === "DOCTOR" ? Stethoscope : Building2;
   return <article className="flex h-full flex-col overflow-hidden rounded-2xl border bg-white transition-shadow hover:shadow-lg hover:shadow-slate-200/50">
     <div className="flex items-start justify-between bg-slate-100 p-6">
-      <div className="flex size-18 items-center justify-center rounded-2xl border border-white bg-white text-sky-700"><Icon className="size-9" aria-hidden="true" strokeWidth={1.5} /></div>
+      {doctor.photoUrl ? <img src={doctor.photoUrl} alt={`Fotografie publicată pentru ${doctor.name}`} loading="lazy" referrerPolicy="no-referrer" className="size-18 rounded-2xl border border-white bg-white object-cover" /> : <div className="flex size-18 items-center justify-center rounded-2xl border border-white bg-white text-sky-700"><Icon className="size-9" aria-hidden="true" strokeWidth={1.5} /></div>}
       <div className="flex flex-col items-end gap-2">{doctor.isDemo && <span className="tag bg-amber-100 text-amber-900">Demo</span>}{doctor.isFeatured && <span className="tag bg-white text-sky-800">{doctor.isDemo ? "Promovare demo" : "Partener promovat"}</span>}</div>
     </div>
     <div className="flex flex-1 flex-col p-6">

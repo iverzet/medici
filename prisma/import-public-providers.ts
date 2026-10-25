@@ -23,11 +23,11 @@ async function main() {
     const provider = await db.provider.upsert({
       where: { slug: candidate.slug },
       create: {
-        name: candidate.name, slug: candidate.slug, kind: candidate.kind, description: candidate.description,
+        name: candidate.name, slug: candidate.slug, kind: candidate.kind, description: candidate.description, photoUrl: candidate.photoUrl,
         sourceUrl: candidate.sourceUrl, sourceCollectedAt: new Date(), isPublished: candidate.publish, verification: candidate.publish ? "VERIFIED" : "PENDING", verifiedAt: candidate.publish ? new Date() : null,
         locations: { create: candidate.location },
       },
-      update: existing?.isPublished ? { sourceCollectedAt: new Date() } : { name: candidate.name, description: candidate.description, sourceUrl: candidate.sourceUrl, sourceCollectedAt: new Date(), isPublished: candidate.publish, verification: candidate.publish ? "VERIFIED" : "PENDING", verifiedAt: candidate.publish ? new Date() : null },
+      update: existing?.isPublished ? { sourceCollectedAt: new Date(), photoUrl: candidate.photoUrl } : { name: candidate.name, description: candidate.description, photoUrl: candidate.photoUrl, sourceUrl: candidate.sourceUrl, sourceCollectedAt: new Date(), isPublished: candidate.publish, verification: candidate.publish ? "VERIFIED" : "PENDING", verifiedAt: candidate.publish ? new Date() : null },
     });
     const locations = await db.location.count({ where: { providerId: provider.id } });
     if (locations === 0) await db.location.create({ data: { providerId: provider.id, ...candidate.location } });

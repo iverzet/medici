@@ -155,6 +155,7 @@ model Provider {
   slug           String       @unique
   kind           ProviderKind
   description    String       @db.Text
+  photoUrl       String?
   verification   ProviderVerification @default(PENDING)
   verifiedAt     DateTime?
   isPublished    Boolean      @default(false)

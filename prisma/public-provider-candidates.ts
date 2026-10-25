@@ -4,6 +4,7 @@ export type PublicProviderCandidate = {
   kind: "CLINIC" | "DOCTOR";
   description: string;
   sourceUrl: string;
+  photoUrl?: string;
   publish: boolean;
   location: { city: string; address: string; phone?: string; email?: string };
   services: string[];
@@ -11,6 +12,17 @@ export type PublicProviderCandidate = {
 
 // Every entry is based on a public page controlled by the provider and retains that source link.
 export const publicProviderCandidates: PublicProviderCandidate[] = [
+  {
+    name: "Dr. Ciprian Silaghi",
+    slug: "dr-ciprian-silaghi-proctologie-brasov",
+    kind: "DOCTOR",
+    description: "Medic primar chirurgie generală prezentat de ProctoLaser Brașov, cu activitate în patologia proctologică.",
+    sourceUrl: "https://proctolaser.ro/doctor/",
+    photoUrl: "https://proctolaser.ro/wp-content/uploads/2026/07/DSC06820-768x1056.jpg",
+    publish: true,
+    location: { city: "Brașov", address: "Strada Stadionului 16, Brașov", phone: "+40743507131", email: "contact@proctolaser.ro" },
+    services: ["Consultație proctologie", "Tratament hemoroizi", "Tratament fistulă anală"],
+  },
   {
     name: "Clinica Everest",
     slug: "clinica-everest-bucuresti",
