@@ -19,15 +19,15 @@ async function main() {
   let skipped = 0;
   for (const candidate of publicProviderCandidates) {
     const existing = await db.provider.findUnique({ where: { slug: candidate.slug }, select: { id: true, isPublished: true, verification: true } });
-    if (existing && (existing.isPublished || existing.verification !== "PENDING")) { skipped += 1; continue; }
+    if (existing?.verification === "REJECTED") { skipped += 1; continue; }
     const provider = await db.provider.upsert({
       where: { slug: candidate.slug },
       create: {
         name: candidate.name, slug: candidate.slug, kind: candidate.kind, description: candidate.description,
-        sourceUrl: candidate.sourceUrl, sourceCollectedAt: new Date(), isPublished: false, verification: "PENDING",
+        sourceUrl: candidate.sourceUrl, sourceCollectedAt: new Date(), isPublished: candidate.publish, verification: candidate.publish ? "VERIFIED" : "PENDING", verifiedAt: candidate.publish ? new Date() : null,
         locations: { create: candidate.location },
       },
-      update: { name: candidate.name, description: candidate.description, sourceUrl: candidate.sourceUrl, sourceCollectedAt: new Date() },
+      update: existing?.isPublished ? { sourceCollectedAt: new Date() } : { name: candidate.name, description: candidate.description, sourceUrl: candidate.sourceUrl, sourceCollectedAt: new Date(), isPublished: candidate.publish, verification: candidate.publish ? "VERIFIED" : "PENDING", verifiedAt: candidate.publish ? new Date() : null },
     });
     const locations = await db.location.count({ where: { providerId: provider.id } });
     if (locations === 0) await db.location.create({ data: { providerId: provider.id, ...candidate.location } });

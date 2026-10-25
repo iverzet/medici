@@ -2,6 +2,7 @@ export type Service = { name: string; price: number };
 export type CatalogDoctor = {
   id: string; name: string; slug: string; title: string; kind: "DOCTOR" | "CLINIC";
   city: string; address: string; phone: string; email: string; description: string;
+  sourceUrl?: string | null;
   photoUrl: string | null; rating: number | null; isFeatured: boolean; isDemo: boolean; services: Service[];
 };
 export type CatalogCity = { id: string; cityName: string; slug: string; metaTitle: string; metaDescription: string; contentIntro: string };
