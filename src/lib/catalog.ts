@@ -5,7 +5,7 @@ import { site } from "@/config/site";
 import { municipalities, municipalitySlug } from "@/lib/municipalities";
 import { seedCities, seedDoctors, type CatalogCity, type CatalogDoctor } from "../../prisma/seed-data";
 
-export function isDemoMode() { return process.env.DEMO_MODE !== "false"; }
+export function isDemoMode() { return process.env.DEMO_MODE === "true"; }
 export const demoMode = isDemoMode();
 const municipalityCities: CatalogCity[] = municipalities.map((cityName) => ({
   id: `municipality-${cityName}`,
