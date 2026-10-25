@@ -15,7 +15,7 @@ export function DoctorCard({ doctor }: { doctor: CatalogDoctor }) {
       <p className="mt-2 text-sm leading-6 text-slate-600">{doctor.title}</p>
       {doctor.rating !== null && <p className="mt-4 flex items-center gap-1.5 text-sm"><Star className="size-4 text-amber-600" aria-hidden="true" />{doctor.rating.toFixed(1)}<span className="text-xs text-slate-500">{doctor.isDemo ? "scor fictiv" : "scor afișat de partener"}</span></p>}
       <div className="mt-auto flex items-end justify-between gap-3 border-t pt-5 mt-5">
-        <div><span className="text-xs text-slate-500">Consultație{doctor.isDemo ? " · tarif demo" : " · orientativ"}</span><p className="text-lg font-semibold">{doctor.services[0] ? `${doctor.services[0].price} lei` : "La cerere"}</p></div>
+        <div><span className="text-xs text-slate-500">Consultație{doctor.isDemo ? " · tarif demo" : " · orientativ"}</span><p className="text-lg font-semibold">{doctor.services[0]?.price !== null && doctor.services[0]?.price !== undefined ? `${doctor.services[0].price} lei` : "La cerere"}</p></div>
         <Link href={`/medici/${doctor.slug}`} className="flex items-center gap-1 text-sm font-semibold text-sky-800">Vezi profilul <ArrowUpRight className="size-4" aria-hidden="true" /></Link>
       </div>
     </div>

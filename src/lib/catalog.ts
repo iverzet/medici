@@ -48,7 +48,7 @@ export const getDoctors = cache(async (): Promise<CatalogDoctor[]> => {
         kind: provider.kind, city: location.city, address: location.address,
         phone: location.phone || "", email: location.email || "", description: provider.description, sourceUrl: provider.sourceUrl,
         photoUrl: null, rating: null, isFeatured: false, isDemo: false,
-        services: provider.services.map(({ service, minPrice }) => ({ name: service.name, price: Number(minPrice ?? service.minPrice ?? 0) })),
+        services: provider.services.map(({ service, minPrice }) => ({ name: service.name, price: minPrice ?? service.minPrice ? Number(minPrice ?? service.minPrice) : null })),
       }];
     });
   } catch (error) {

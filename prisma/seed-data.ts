@@ -1,4 +1,4 @@
-export type Service = { name: string; price: number };
+export type Service = { name: string; price: number | null };
 export type CatalogDoctor = {
   id: string; name: string; slug: string; title: string; kind: "DOCTOR" | "CLINIC";
   city: string; address: string; phone: string; email: string; description: string;
