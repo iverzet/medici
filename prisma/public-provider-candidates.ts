@@ -513,4 +513,14 @@ export const publicProviderCandidates: PublicProviderCandidate[] = [
     location: { city: "Drobeta-Turnu Severin", address: "Bulevardul Tudor Vladimirescu 130, Drobeta-Turnu Severin" },
     services: ["Consultație proctologie", "Consultație chirurgie generală"],
   },
+  {
+    name: "Dr. Horea Braicu",
+    slug: "dr-horea-braicu-proctologie-resita",
+    kind: "DOCTOR",
+    description: "Medic chirurg din Reșița cu servicii publicate de anuscopie, rectosigmoidoscopie și chirurgie a colonului și rectului.",
+    sourceUrl: "https://www.medici-romania.ro/chirurgie/caras-severin/doctor-braicu-horea-cabinet-medical-de-chirurgie-generala-caras-severin",
+    publish: true,
+    location: { city: "Reșița", address: "Strada Făgărașului 8, Reșița", phone: "+40255227830" },
+    services: ["Consultație proctologie", "Anuscopie", "Rectosigmoidoscopie"],
+  },
 ];
