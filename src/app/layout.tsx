@@ -4,6 +4,7 @@ import { site } from "@/config/site";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { CookieConsent } from "@/components/cookie-consent";
+import { GoogleAnalytics } from "@/components/google-analytics";
 import "./globals.css";
 
 const geist = Geist({ variable: "--font-geist-sans", subsets: ["latin", "latin-ext"], display: "swap" });
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         <SiteFooter />
         <CookieConsent />
+        <GoogleAnalytics measurementId="G-C9QQRQJTM0" siteName="Proctologi.ro" medical waitForCityChoice />
       </body>
     </html>
   );
