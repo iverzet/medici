@@ -503,4 +503,14 @@ export const publicProviderCandidates: PublicProviderCandidate[] = [
     location: { city: "Slatina", address: "Centrul Medical Lisimed, Aleea Tineretului 1D, Slatina", phone: "+40249402000", email: "office@lisimed.ro" },
     services: ["Consultație proctologie", "Consultație chirurgie generală"],
   },
+  {
+    name: "Centrul Medical MedLife Drobeta Turnu Severin",
+    slug: "centrul-medical-medlife-drobeta-turnu-severin-proctologie",
+    kind: "CLINIC",
+    description: "Centru medical din Drobeta-Turnu Severin listat public cu consultații de proctologie, chirurgie generală și urologie.",
+    sourceUrl: "https://www.clickmed.ro/unitati-medicale/clinica-medlife-drobeta-turnu-severin",
+    publish: true,
+    location: { city: "Drobeta-Turnu Severin", address: "Bulevardul Tudor Vladimirescu 130, Drobeta-Turnu Severin" },
+    services: ["Consultație proctologie", "Consultație chirurgie generală"],
+  },
 ];
