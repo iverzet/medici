@@ -15,8 +15,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const city = await getCity((await params).citySlug);
   if (!city) return { title: "Oraș negăsit", robots: { index: false, follow: false } };
   const doctors = (await getDoctors()).filter((doctor) => doctor.city === city.cityName && !doctor.isDemo);
-  if (doctors.length === 0) return { ...pageMetadata(city.metaTitle, city.metaDescription, "/" + city.slug), robots: { index: false, follow: false } };
-  return pageMetadata(city.metaTitle, city.metaDescription, "/" + city.slug);
+  const title = `${site.specialistLabel} și clinici de ${site.specialty} în ${city.cityName}`;
+  const description = `Găsește ${site.specialistLabel.toLocaleLowerCase("ro-RO")} și clinici de ${site.specialty} în ${city.cityName}. Compară serviciile disponibile și cere o programare.`;
+  if (doctors.length === 0) return { ...pageMetadata(title, description, "/" + city.slug), robots: { index: false, follow: false } };
+  return pageMetadata(title, description, "/" + city.slug);
 }
 export default async function CityPage({ params, searchParams }: Props) {
   const [{ citySlug }, query, cities, doctors] = await Promise.all([params, searchParams, getCities(), getDoctors()]);

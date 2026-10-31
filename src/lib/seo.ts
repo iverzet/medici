@@ -6,7 +6,11 @@ export function pageMetadata(title: string, description: string, path: string, n
   const url = new URL(path, site.url).href;
   return {
     title, description, alternates: { canonical: url },
-    robots: { index: !noindex, follow: !noindex },
+    robots: {
+      index: !noindex,
+      follow: !noindex,
+      googleBot: { index: !noindex, follow: !noindex, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+    },
     openGraph: { title, description, url, siteName: site.name, locale: site.locale, type: "website" },
     twitter: { card: "summary", title, description },
   };

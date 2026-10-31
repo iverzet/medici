@@ -37,7 +37,7 @@ Importul de surse publice păstrează URL-ul și data colectării, dar creează 
 
 Orașe: `/proctologi-bucuresti`, `/proctologi-cluj`, `/proctologi-timisoara`, `/proctologi-iasi`, `/proctologi-brasov`. Exemplu de profil: `/medici/demo-medic-bucuresti`. Datele fictive nu generează entități medicale în JSON-LD și sunt excluse din sitemap. Nu există apeluri sau hărți pentru adrese fictive.
 
-`SITE_INDEXABLE=false` păstrează noindex și robots Disallow până la lansarea cu date reale. Activează indexarea numai după verificarea domeniului și conținutului. Profilurile Demo rămân noindex și după activare.
+`SITE_INDEXABLE=true` menține indexarea activă pentru catalogul cu date reale. Setează explicit `false` numai pentru staging sau oprire temporară. Profilurile Demo și paginile fără profiluri reale rămân noindex; articolele de blog rămân noindex până la revizuire editorială medicală individuală. Adaugă `GOOGLE_SITE_VERIFICATION` după verificarea proprietății în Google Search Console.
 
 ## Administrare și email
 

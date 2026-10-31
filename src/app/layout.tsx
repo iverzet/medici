@@ -14,7 +14,15 @@ export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: { default: site.name, template: `%s | ${site.name}` },
   description: site.description,
-  robots: { index: site.indexable, follow: site.indexable },
+  applicationName: site.name,
+  category: "health",
+  alternates: { canonical: "/" },
+  robots: {
+    index: site.indexable,
+    follow: site.indexable,
+    googleBot: { index: site.indexable, follow: site.indexable, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
+  },
+  verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

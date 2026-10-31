@@ -7,7 +7,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!site.indexable) return [];
   const [cities, doctors] = await Promise.all([getCities(), getDoctors()]);
   const activeCities = cities.filter((city) => doctors.some((doctor) => doctor.city === city.cityName && !doctor.isDemo));
-  const paths = ["/", "/pentru-clinici", "/confidentialitate", "/termeni", ...activeCities.map((city) => "/" + city.slug), ...doctors.filter((doctor) => !doctor.isDemo).map((doctor) => "/medici/" + doctor.slug)];
-  return paths.map((path) => ({ url: new URL(path, site.url).href, changeFrequency: "weekly", priority: path === "/" ? 1 : 0.7 }));
+  const now = new Date();
+  return [
+    { path: "/", changeFrequency: "weekly" as const, priority: 1 },
+    { path: "/pentru-clinici", changeFrequency: "monthly" as const, priority: 0.5 },
+    ...activeCities.map((city) => ({ path: `/${city.slug}`, changeFrequency: "weekly" as const, priority: 0.8 })),
+    ...doctors.filter((doctor) => !doctor.isDemo).map((doctor) => ({ path: `/medici/${doctor.slug}`, changeFrequency: "monthly" as const, priority: 0.7 })),
+  ].map(({ path, changeFrequency, priority }) => ({ url: new URL(path, site.url).href, lastModified: now, changeFrequency, priority }));
 }
 

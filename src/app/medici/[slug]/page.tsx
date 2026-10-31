@@ -13,7 +13,7 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const doctor = await getDoctor((await params).slug);
   if (!doctor) return { title: "Profil negăsit", robots: { index: false, follow: false } };
-  return pageMetadata(doctor.name, `${doctor.title}. Servicii și tarife orientative în ${doctor.city}.`, "/medici/" + doctor.slug, doctor.isDemo || !site.indexable);
+  return pageMetadata(`${doctor.name} – ${site.specialty} în ${doctor.city}`, `${doctor.title} din ${doctor.city}. Vezi serviciile publicate și modalitățile de contact ale furnizorului.`, "/medici/" + doctor.slug, doctor.isDemo || !site.indexable);
 }
 export default async function DoctorPage({ params }: Props) {
   const [doctor, cities] = await Promise.all([getDoctor((await params).slug), getCities()]);
