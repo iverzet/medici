@@ -7,6 +7,7 @@ import { DoctorCard } from "@/components/doctor-card";
 import { DoctorFilters } from "@/components/doctor-filters";
 import { LeadForm } from "@/components/lead-form";
 import { MobileContactBar } from "@/components/mobile-contact-bar";
+import { CitySeoContent } from "@/components/city-seo-content";
 import { site } from "@/config/site";
 
 export const revalidate = 300;
@@ -48,6 +49,7 @@ export default async function CityPage({ params, searchParams }: Props) {
       <aside><LeadForm cities={cities.map((item) => item.cityName)} city={city.cityName} /></aside>
     </div>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd({ "@context": "https://schema.org", "@type": "CollectionPage", name: `${site.specialistLabel} și clinici de ${site.specialty} în ${city.cityName}`, url: new URL("/" + city.slug, site.url).href, mainEntity: { "@type": "ItemList", numberOfItems: realDoctors.length, itemListElement: realDoctors.map((doctor,index) => ({ "@type": "ListItem", position: index+1, item: providerSchema(doctor) })) } }) }} />
+    <CitySeoContent cityName={city.cityName} suggestedNames={suggestedCities.map((item) => item.cityName)} />
     <MobileContactBar />
   </main>;
 }

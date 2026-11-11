@@ -1,3 +1,5 @@
+import { site } from "@/config/site";
+
 export type BlogArticle = { slug: string; title: string; excerpt: string; category: string; publishedAt: string; readTime: string; coverImage: string; author?: string; reviewedBy?: { name: string; title: string; registration: string }; sources: { label: string; url: string }[]; content: string[]; };
 const topics = [
   ["Când este recomandat un consult", "Semnele care merită discutate cu un specialist și cum te pregătești pentru prima vizită."],
@@ -27,11 +29,13 @@ const slugify = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036
 export const blogArticles: BlogArticle[] = topics.flatMap(([topic, intro], topicIndex) => variants.map((variant, variantIndex) => {
   const title = `${topic}? – ${variant}`;
   return { slug: `${slugify(topic)}-${variantIndex + 1}`, title, excerpt: intro, category: topicIndex % 2 ? "Prima vizită" : "Ghid medical", publishedAt: `2026-${String(10 - Math.floor(topicIndex / 4)).padStart(2, "0")}-${String(20 - variantIndex).padStart(2, "0")}`, readTime: `${4 + (topicIndex + variantIndex) % 4} min`, coverImage: "/images/blog/proctology-consultation-firefly.jpg", sources: [{ label: "NIDDK – informații pentru pacienți", url: "https://www.niddk.nih.gov/health-information" }, { label: "NHS – ghiduri pentru pacienți", url: "https://www.nhs.uk/conditions/" }], content: [
-    `${topic} este o întrebare frecventă. Informațiile de mai jos sunt orientative și te ajută să pregătești o discuție cu un medic specialist în proctologie.`,
+    `${topic} este o întrebare frecventă despre ${site.specialty}. Informațiile sunt orientative și te ajută să pregătești o discuție cu un medic specialist.`,
     guidance[topicIndex],
-    `Notează simptomele, momentul apariției și întrebările pe care le ai. Un specialist poate interpreta aceste informații împreună cu istoricul tău și poate recomanda următorii pași.`,
-    "Nu trimite diagnostice sau rezultate de analize într-un formular general. Pentru simptome severe sau care se agravează rapid, apelează serviciile de urgență.",
+    `Notează când au apărut simptomele, ce le agravează și ce întrebări ai. Medicul poate interpreta aceste informații împreună cu istoricul tău și poate recomanda următorii pași.`,
+    `În timpul consultației, întreabă ce opțiuni există, ce investigații sunt necesare, care sunt beneficiile și riscurile și când trebuie să revii. Nu încerca să stabilești singur un diagnostic pe baza unui articol.`,
+    "Nu trimite diagnostice sau rezultate de analize într-un formular general. Pentru simptome severe, agravare rapidă sau o urgență, apelează 112.",
     `Dacă vrei să discuți cu un specialist, alege orașul din catalog și trimite o cerere de contact. Cererea nu reprezintă o programare confirmată; disponibilitatea se confirmă ulterior.`,
+    `Sursele internaționale de la final oferă informații generale pentru pacienți. Pentru o decizie potrivită situației tale, discută direct cu un specialist în ${site.specialty}.`,
   ] };
 }));
 export function getArticle(slug: string) { return blogArticles.find((article) => article.slug === slug); }
