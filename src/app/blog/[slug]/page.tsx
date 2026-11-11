@@ -4,7 +4,7 @@ import { pageMetadata } from "@/lib/seo";
 import Image from "next/image";
 
 export function generateStaticParams() { return blogArticles.map((article) => ({ slug: article.slug })); }
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) { const article = getArticle((await params).slug); return article ? { ...pageMetadata(article.title, article.excerpt, `/blog/${article.slug}`), robots: { index: false, follow: false } } : {}; }
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) { const article = getArticle((await params).slug); return article ? pageMetadata(article.title, article.excerpt, `/blog/${article.slug}`) : {}; }
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const article = getArticle((await params).slug); if (!article) notFound();
