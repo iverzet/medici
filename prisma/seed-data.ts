@@ -5,7 +5,7 @@ export type CatalogDoctor = {
   sourceUrl?: string | null;
   photoUrl: string | null; rating: number | null; isFeatured: boolean; isDemo: boolean; services: Service[];
 };
-export type CatalogCity = { id: string; cityName: string; slug: string; metaTitle: string; metaDescription: string; contentIntro: string };
+export type CatalogCity = { id: string; cityName: string; slug: string; countyCode?: string; metaTitle: string; metaDescription: string; contentIntro: string };
 
 const cities = [
   ["București", "bucuresti"], ["Cluj-Napoca", "cluj"], ["Timișoara", "timisoara"],

@@ -1,6 +1,6 @@
-export const municipalities = [
-  "Alba Iulia", "Alexandria", "Arad", "Bacău", "Baia Mare", "Bistrița", "Botoșani", "Brașov", "Brăila", "București", "Buzău", "Călărași", "Cluj-Napoca", "Constanța", "Craiova", "Deva", "Drobeta-Turnu Severin", "Focșani", "Galați", "Giurgiu", "Iași", "Miercurea Ciuc", "Oradea", "Piatra Neamț", "Pitești", "Ploiești", "Râmnicu Vâlcea", "Reșița", "Satu Mare", "Sfântu Gheorghe", "Sibiu", "Slatina", "Slobozia", "Suceava", "Târgoviște", "Târgu Jiu", "Târgu Mureș", "Timișoara", "Tulcea", "Vaslui", "Zalău"
-] as const;
+import { urbanCities } from "@/lib/romanian-cities";
+
+export const municipalities = urbanCities.map((city) => city.name);
 
 export function isKnownMunicipality(cityName: string) { return municipalities.includes(cityName as typeof municipalities[number]); }
 

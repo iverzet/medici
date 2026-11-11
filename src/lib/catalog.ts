@@ -2,18 +2,19 @@ import "server-only";
 import { cache } from "react";
 import { getDb } from "@/lib/db";
 import { site } from "@/config/site";
-import { municipalities, municipalitySlug } from "@/lib/municipalities";
+import { urbanCities } from "@/lib/romanian-cities";
 import { seedCities, seedDoctors, type CatalogCity, type CatalogDoctor } from "../../prisma/seed-data";
 
 export function isDemoMode() { return process.env.DEMO_MODE === "true"; }
 export const demoMode = isDemoMode();
-const municipalityCities: CatalogCity[] = municipalities.map((cityName) => ({
-  id: `municipality-${cityName}`,
-  cityName,
-  slug: municipalitySlug(cityName, site.name.startsWith("Andrologi") ? "andrologi" : "proctologi"),
-  metaTitle: `${site.name} în ${cityName}`,
-  metaDescription: `Găsește informații și opțiuni de programare pentru ${site.specialty} în ${cityName}.`,
-  contentIntro: `Explorează opțiunile disponibile pentru ${site.specialty} în ${cityName} și cere o programare confidențială.`,
+const urbanLocalityCities: CatalogCity[] = urbanCities.map((city) => ({
+  id: `urban-city-${city.slug}`,
+  cityName: city.name,
+  slug: `${site.name.startsWith("Andrologi") ? "andrologi" : "proctologi"}-${city.slug}`,
+  countyCode: city.countyCode,
+  metaTitle: `${site.name} în ${city.name}`,
+  metaDescription: `Găsește informații și opțiuni de programare pentru ${site.specialty} în ${city.name}.`,
+  contentIntro: `Explorează opțiunile disponibile pentru ${site.specialty} în ${city.name} și cere o programare confidențială.`,
 }));
 
 function cityKey(cityName: string) {
@@ -30,7 +31,7 @@ function publicRomanianPhone(value: string | null) {
 
 function withMunicipalities(cities: CatalogCity[]) {
   const knownNames = new Set(cities.map((city) => cityKey(city.cityName)));
-  return [...cities, ...municipalityCities.filter((city) => !knownNames.has(cityKey(city.cityName)))];
+  return [...cities, ...urbanLocalityCities.filter((city) => !knownNames.has(cityKey(city.cityName)))];
 }
 export const getCities = cache(async (): Promise<CatalogCity[]> => {
   if (demoMode) return withMunicipalities(seedCities);
@@ -73,4 +74,11 @@ export const getCity = cache(async (slug: string) => (await getCities()).find((c
 export const getDoctor = cache(async (slug: string) => (await getDoctors()).find((doctor) => doctor.slug === slug));
 export function filterDoctors(doctors: CatalogDoctor[], kind: string, service: string) {
   return doctors.filter((doctor) => (!kind || doctor.kind === kind) && (!service || doctor.services.some((item) => item.name === service)));
+}
+
+export function getSuggestedCities(city: CatalogCity, cities: CatalogCity[], doctors: CatalogDoctor[], limit = 3) {
+  const providerCities = new Set(doctors.filter((doctor) => !doctor.isDemo).map((doctor) => cityKey(doctor.city)));
+  const candidates = cities.filter((candidate) => candidate.cityName !== city.cityName && providerCities.has(cityKey(candidate.cityName)));
+  const sameCounty = candidates.filter((candidate) => candidate.countyCode && candidate.countyCode === city.countyCode);
+  return (sameCounty.length > 0 ? sameCounty : candidates).slice(0, limit);
 }
