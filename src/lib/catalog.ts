@@ -31,7 +31,9 @@ function publicRomanianPhone(value: string | null) {
 
 function withMunicipalities(cities: CatalogCity[]) {
   const knownNames = new Set(cities.map((city) => cityKey(city.cityName)));
-  return [...cities, ...urbanLocalityCities.filter((city) => !knownNames.has(cityKey(city.cityName)))];
+  const metadata = new Map(urbanLocalityCities.map((city) => [cityKey(city.cityName), city]));
+  const existing = cities.map((city) => ({ ...city, countyCode: city.countyCode ?? metadata.get(cityKey(city.cityName))?.countyCode }));
+  return [...existing, ...urbanLocalityCities.filter((city) => !knownNames.has(cityKey(city.cityName)))];
 }
 export const getCities = cache(async (): Promise<CatalogCity[]> => {
   if (demoMode) return withMunicipalities(seedCities);
