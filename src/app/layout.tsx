@@ -16,6 +16,7 @@ export const metadata: Metadata = {
   description: site.description,
   applicationName: site.name,
   category: "health",
+  icons: { icon: "/icon.svg" },
   alternates: { canonical: "/" },
   robots: {
     index: site.indexable,

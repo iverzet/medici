@@ -6,6 +6,7 @@ export const site = {
   indexable: process.env.SITE_INDEXABLE !== "false",
   specialty: "proctologie",
   specialistLabel: "Proctologi",
+  singularSpecialistLabel: "proctolog",
   locale: "ro_RO",
   description: "Găsește medici și clinici de proctologie în orașul tău. Compară servicii și trimite o cerere de contact în siguranță.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://proctologi.ro",

@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!city) return { title: "Oraș negăsit", robots: { index: false, follow: false } };
   const doctors = (await getDoctors()).filter((doctor) => doctor.city === city.cityName && !doctor.isDemo);
   const title = `${site.specialistLabel} și clinici de ${site.specialty} în ${city.cityName}`;
-  const description = `Găsește ${site.specialistLabel.toLocaleLowerCase("ro-RO")} și clinici de ${site.specialty} în ${city.cityName}. Compară serviciile disponibile și cere o programare.`;
+  const description = `Cauți un ${site.singularSpecialistLabel} în ${city.cityName}? Compară profiluri publicate, servicii și modalități de contact pentru ${site.specialty}.`;
   if (doctors.length === 0) return { ...pageMetadata(title, description, "/" + city.slug), robots: { index: false, follow: false } };
   return pageMetadata(title, description, "/" + city.slug);
 }
@@ -30,11 +30,13 @@ export default async function CityPage({ params, searchParams }: Props) {
   const service = typeof query.serviciu === "string" ? query.serviciu : "";
   const filtered = filterDoctors(cityDoctors, kind, service);
   const realDoctors = cityDoctors.filter((doctor) => !doctor.isDemo);
+  const servicesSummary = [...new Set(realDoctors.flatMap((doctor) => doctor.services.map((item) => item.name)))].slice(0, 4);
   return <main id="continut" className="pb-24 md:pb-0">
     <section className="border-b bg-sky-50"><div className="site-container py-12 sm:py-16">
       <nav aria-label="Fir de navigare" className="mb-6 text-sm text-slate-600"><Link href="/">Acasă</Link><span aria-hidden="true"> / </span><span>{city.cityName}</span></nav>
-      <p className="eyebrow">Specialiști în orașul tău</p><h1 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">Proctologi și clinici de proctologie în {city.cityName}</h1>
+      <p className="eyebrow">Specialiști în orașul tău</p><h1 className="mt-4 max-w-3xl text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">{site.specialistLabel} și clinici de {site.specialty} în {city.cityName}</h1>
       <p className="mt-6 max-w-3xl leading-8 text-slate-600">{city.contentIntro}</p>
+      {realDoctors.length > 0 && <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-700">Cauți un {site.singularSpecialistLabel} în {city.cityName}? Sunt publicate {realDoctors.length} {realDoctors.length === 1 ? "profil verificat" : "profiluri verificate"}{servicesSummary.length > 0 ? `, cu servicii precum ${servicesSummary.join(", ")}.` : "."}</p>}
       {(demoMode || cityDoctors.some((doctor) => doctor.isDemo)) && <p className="mt-6 inline-block rounded-lg bg-amber-100 px-4 py-2 text-sm text-amber-900">Catalog demonstrativ. Profilurile Demo, adresele și tarifele sunt fictive.</p>}
     </div></section>
     <div className="site-container grid items-start gap-8 py-10 lg:grid-cols-[1fr_340px]">
@@ -45,7 +47,7 @@ export default async function CityPage({ params, searchParams }: Props) {
       </section>
       <aside><LeadForm cities={cities.map((item) => item.cityName)} city={city.cityName} /></aside>
     </div>
-    {realDoctors.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd({ "@context": "https://schema.org", "@type": "CollectionPage", name: city.metaTitle, url: new URL("/" + city.slug, site.url).href, mainEntity: { "@type": "ItemList", itemListElement: realDoctors.map((doctor,index) => ({ "@type": "ListItem", position: index+1, item: providerSchema(doctor) })) } }) }} />}
+    {realDoctors.length > 0 && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd({ "@context": "https://schema.org", "@type": "CollectionPage", name: `${site.specialistLabel} și clinici de ${site.specialty} în ${city.cityName}`, url: new URL("/" + city.slug, site.url).href, mainEntity: { "@type": "ItemList", numberOfItems: realDoctors.length, itemListElement: realDoctors.map((doctor,index) => ({ "@type": "ListItem", position: index+1, item: providerSchema(doctor) })) } }) }} />}
     <MobileContactBar />
   </main>;
 }

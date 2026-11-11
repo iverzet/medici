@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import type { CatalogCity, CatalogDoctor } from "../../prisma/seed-data";
 import { COUNTIES as counties, MAP_VIEWBOX, type County } from "@/lib/romania-counties";
 
@@ -47,7 +47,8 @@ export function CountyMap({ cities, doctors }: { cities: CatalogCity[]; doctors:
   const countyBySeat = useMemo(() => new Map(counties.map((county) => [county.seat, county])), []);
   const savedCounty = countyBySeat.get(cities.find((city) => city.slug === savedSlug)?.cityName ?? "");
   const selected = counties.find((county) => county.id === selectedId) ?? savedCounty ?? null;
-  const matches = useMemo(() => new Set(counties.filter((county) => cityByName.has(county.seat)).map((county) => county.id)), [cityByName]);
+  const profileCountBySeat = useMemo(() => new Map(counties.map((county) => [county.seat, doctors.filter((doctor) => doctor.city === county.seat && !doctor.isDemo).length])), [doctors]);
+  const matches = useMemo(() => new Set(counties.filter((county) => (profileCountBySeat.get(county.seat) ?? 0) > 0).map((county) => county.id)), [profileCountBySeat]);
   const filtered = useMemo(() => counties.filter((county) => [county.name, county.code, county.seat].some((value) => value.toLocaleLowerCase("ro").includes(query.toLocaleLowerCase("ro")))), [query]);
 
   const selectCounty = (county: County) => {
@@ -55,10 +56,6 @@ export function CountyMap({ cities, doctors }: { cities: CatalogCity[]; doctors:
     const city = cityByName.get(county.seat);
     if (city) saveCity(city.slug);
   };
-
-  useEffect(() => {
-    if (savedCounty && !selectedId) setSelectedId(savedCounty.id);
-  }, [savedCounty, selectedId]);
 
   const useLocation = () => {
     if (!navigator.geolocation) {
@@ -68,7 +65,7 @@ export function CountyMap({ cities, doctors }: { cities: CatalogCity[]; doctors:
     setLocationMessage("Căutăm județul cel mai apropiat…");
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
-        const available = counties.filter((county) => cityCoordinates[county.seat] && cityByName.has(county.seat));
+        const available = counties.filter((county) => cityCoordinates[county.seat] && matches.has(county.id));
         const nearest = available.sort((left, right) => {
           const distance = (county: County) => {
             const point = cityCoordinates[county.seat];
@@ -78,7 +75,7 @@ export function CountyMap({ cities, doctors }: { cities: CatalogCity[]; doctors:
         })[0];
         if (nearest) {
           selectCounty(nearest);
-          setLocationMessage(`Am selectat ${nearest.seat}, zona cea mai apropiată din catalog.`);
+          setLocationMessage(`Am selectat ${nearest.seat}, cea mai apropiată zonă cu profiluri verificate.`);
         } else {
           setLocationMessage("Nu avem încă un municipiu disponibil în apropiere. Alege manual localitatea.");
         }
@@ -140,7 +137,7 @@ export function CountyMap({ cities, doctors }: { cities: CatalogCity[]; doctors:
                   <button type="button" onClick={() => selectCounty(county)} aria-pressed={county.id === selected?.id}
                     className="flex w-full items-center justify-between px-4 py-3 text-left text-sm hover:bg-sky-50 aria-pressed:bg-sky-100">
                     <span><span className="font-medium">{county.name}</span><span className="ml-2 text-xs text-slate-500">{county.seat}</span></span>
-                    <span className="text-xs font-semibold text-sky-800">{county.code}</span>
+                    <span className="text-right text-xs font-semibold text-sky-800"><span className="block">{county.code}</span><span className="font-normal text-slate-500">{profileCountBySeat.get(county.seat) ?? 0} profiluri</span></span>
                   </button>
                 </li>)}
                 {filtered.length === 0 && <li className="px-4 py-6 text-center text-sm text-slate-500">Niciun județ găsit.</li>}
@@ -167,8 +164,8 @@ export function CountyMap({ cities, doctors }: { cities: CatalogCity[]; doctors:
                 <div className="flex justify-between gap-3"><dt className="text-slate-500">Profiluri în catalog</dt><dd className="font-medium">{selectedDoctors.length}</dd></div>
               </dl>
               {selectedDoctors.length > 0 && <ul className="mt-5 space-y-3">{selectedDoctors.slice(0, 3).map((doctor) => <li key={doctor.id}><Link className="font-medium text-sky-800 hover:underline" href={`/medici/${doctor.slug}`}>{doctor.name}</Link><span className="block text-xs text-slate-500">{doctor.title}</span></li>)}</ul>}
-              {selectedCity ? <Link href={`/${selectedCity.slug}`} className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">Vezi specialiștii</Link> :
-                <p className="mt-6 rounded-xl bg-slate-50 p-3 text-sm text-slate-600">Pagina locală va fi disponibilă în curând.</p>}
+              {selectedCity && selectedDoctors.length > 0 ? <Link href={`/${selectedCity.slug}`} className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">Vezi specialiștii</Link> :
+                <p className="mt-6 rounded-xl bg-slate-50 p-3 text-sm text-slate-600">Nu există încă profiluri verificate în această zonă. Caută un județ apropiat.</p>}
             </div>}
           </aside>
         </div>

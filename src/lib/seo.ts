@@ -16,12 +16,15 @@ export function pageMetadata(title: string, description: string, path: string, n
   };
 }
 export function providerSchema(doctor: CatalogDoctor) {
+  const telephone = /^\+40[2-9]\d{8}$/.test(doctor.phone) ? { telephone: doctor.phone } : {};
+  const image = doctor.photoUrl ? { image: doctor.photoUrl } : {};
   return {
     "@type": doctor.kind === "DOCTOR" ? "Physician" : "MedicalBusiness",
     "@id": new URL(`/medici/${doctor.slug}#provider`, site.url).href,
     name: doctor.name, description: doctor.description,
     url: new URL(`/medici/${doctor.slug}`, site.url).href,
-    telephone: doctor.phone,
+    ...telephone,
+    ...image,
     address: { "@type": "PostalAddress", streetAddress: doctor.address, addressLocality: doctor.city, addressCountry: "RO" },
   };
 }

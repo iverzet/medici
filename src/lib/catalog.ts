@@ -15,9 +15,22 @@ const municipalityCities: CatalogCity[] = municipalities.map((cityName) => ({
   metaDescription: `Găsește informații și opțiuni de programare pentru ${site.specialty} în ${cityName}.`,
   contentIntro: `Explorează opțiunile disponibile pentru ${site.specialty} în ${cityName} și cere o programare confidențială.`,
 }));
+
+function cityKey(cityName: string) {
+  return cityName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("ro-RO");
+}
+
+function publicRomanianPhone(value: string | null) {
+  if (!value) return "";
+  const compact = value.replace(/[ ()-]/g, "");
+  if (/^0040[2-9]\d{8}$/.test(compact)) return `+40${compact.slice(4)}`;
+  if (/^0[2-9]\d{8}$/.test(compact)) return `+40${compact.slice(1)}`;
+  return /^\+40[2-9]\d{8}$/.test(compact) ? compact : "";
+}
+
 function withMunicipalities(cities: CatalogCity[]) {
-  const known = new Set(cities.map((city) => city.slug));
-  return [...cities, ...municipalityCities.filter((city) => !known.has(city.slug))];
+  const knownNames = new Set(cities.map((city) => cityKey(city.cityName)));
+  return [...cities, ...municipalityCities.filter((city) => !knownNames.has(cityKey(city.cityName)))];
 }
 export const getCities = cache(async (): Promise<CatalogCity[]> => {
   if (demoMode) return withMunicipalities(seedCities);
@@ -46,7 +59,7 @@ export const getDoctors = cache(async (): Promise<CatalogDoctor[]> => {
         id: provider.id, name: provider.name, slug: provider.slug,
         title: provider.kind === "DOCTOR" ? "Medic" : "Clinică",
         kind: provider.kind, city: location.city, address: location.address,
-        phone: location.phone || "", email: location.email || "", description: provider.description, sourceUrl: provider.sourceUrl,
+        phone: publicRomanianPhone(location.phone), email: location.email || "", description: provider.description, sourceUrl: provider.sourceUrl,
         photoUrl: provider.photoUrl, rating: null, isFeatured: false, isDemo: false,
         services: provider.services.map(({ service, minPrice }) => ({ name: service.name, price: minPrice ?? service.minPrice ? Number(minPrice ?? service.minPrice) : null })),
       }];
