@@ -4,6 +4,7 @@ import type { CatalogDoctor } from "../../prisma/seed-data";
 
 export function pageMetadata(title: string, description: string, path: string, noindex = !site.indexable): Metadata {
   const url = new URL(path, site.url).href;
+  const socialImage = site.name.startsWith("Proctologi") ? "/images/hero-proctology-v2.png" : "/images/hero-andrology-v2.png";
   return {
     title, description, alternates: { canonical: url },
     robots: {
@@ -11,8 +12,8 @@ export function pageMetadata(title: string, description: string, path: string, n
       follow: !noindex,
       googleBot: { index: !noindex, follow: !noindex, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
     },
-    openGraph: { title, description, url, siteName: site.name, locale: site.locale, type: "website" },
-    twitter: { card: "summary", title, description },
+    openGraph: { title, description, url, siteName: site.name, locale: site.locale, type: "website", images: [{ url: new URL(socialImage, site.url).href }] },
+    twitter: { card: "summary_large_image", title, description, images: [new URL(socialImage, site.url).href] },
   };
 }
 export function providerSchema(doctor: CatalogDoctor) {
@@ -23,6 +24,9 @@ export function providerSchema(doctor: CatalogDoctor) {
     "@id": new URL(`/medici/${doctor.slug}#provider`, site.url).href,
     name: doctor.name, description: doctor.description,
     url: new URL(`/medici/${doctor.slug}`, site.url).href,
+    medicalSpecialty: site.specialty,
+    areaServed: { "@type": "City", name: doctor.city },
+    ...(doctor.sourceUrl ? { sameAs: [doctor.sourceUrl] } : {}),
     ...telephone,
     ...image,
     address: { "@type": "PostalAddress", streetAddress: doctor.address, addressLocality: doctor.city, addressCountry: "RO" },

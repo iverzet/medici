@@ -1,6 +1,6 @@
 import { site } from "@/config/site";
 
-export type BlogArticle = { slug: string; title: string; excerpt: string; category: string; publishedAt: string; readTime: string; coverImage: string; author?: string; reviewedBy?: { name: string; title: string; registration: string }; sources: { label: string; url: string }[]; content: string[]; };
+export type BlogArticle = { slug: string; title: string; excerpt: string; category: string; publishedAt: string; dateModified: string; readTime: string; coverImage: string; imageAlt: string; author: string; reviewedBy?: { name: string; title: string; registration: string }; sources: { label: string; url: string }[]; content: string[]; };
 const topics = [
   ["Când este recomandat un consult", "Semnele care merită discutate cu un specialist și cum te pregătești pentru prima vizită."],
   ["Cum te pregătești pentru consultație", "Un checklist simplu pentru o discuție mai clară și mai confortabilă cu medicul."],
@@ -71,12 +71,24 @@ const andrologyTopics = [
 ] as const;
 const selectedAdditionalTopics = site.name.startsWith("Proctologi") ? proctologyTopics : andrologyTopics;
 const articleTopics = [...topics.map(([topic, intro], index) => [topic, intro, guidance[index]] as const), ...selectedAdditionalTopics];
+const variantGuidance = [
+  "Pe scurt: informația este un punct de pornire pentru discuția cu specialistul, nu un diagnostic.",
+  "Întrebarea merită pusă direct la consultație, împreună cu durata simptomelor și tratamentele încercate.",
+  "Ce trebuie urmărit diferă de la o persoană la alta; contextul clinic este mai important decât un singur simptom.",
+  "Dacă informația nu se potrivește situației tale, oprește autodiagnosticarea și cere o evaluare personalizată.",
+  "Păstrează articolul ca listă de întrebări și confirmă fiecare recomandare cu un profesionist medical.",
+] as const;
+const sourceLinks = site.name.startsWith("Proctologi")
+  ? [{ label: "NIDDK – simptome și cauze ale hemoroizilor", url: "https://www.niddk.nih.gov/health-information/digestive-diseases/hemorrhoids/symptoms-causes" }, { label: "NHS – hemoroizi și semne de alarmă", url: "https://www.nhs.uk/conditions/piles-haemorrhoids/" }]
+  : [{ label: "EAU – ghidul pentru infertilitate masculină", url: "https://uroweb.org/guidelines/s%2Axual-and-reproductive-health/chapter/male-infertility" }, { label: "EAU – ghidul pentru hipogonadism masculin", url: "https://uroweb.org/guidelines/sexual-and-reproductive-health/chapter/male-hypogonadism%20" }];
 const slugify = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 export const blogArticles: BlogArticle[] = articleTopics.flatMap(([topic, intro, topicGuidance], topicIndex) => variants.map((variant, variantIndex) => {
-  const title = `${topic}? – ${variant}`;
-  return { slug: `${slugify(topic)}-${variantIndex + 1}`, title, excerpt: intro, category: topicIndex % 2 ? "Prima vizită" : "Ghid medical", publishedAt: `2026-${String(10 - Math.floor(topicIndex / 4)).padStart(2, "0")}-${String(20 - variantIndex).padStart(2, "0")}`, readTime: `${4 + (topicIndex + variantIndex) % 4} min`, coverImage: "/images/blog/proctology-consultation-firefly.jpg", sources: [{ label: "NIDDK – informații pentru pacienți", url: "https://www.niddk.nih.gov/health-information" }, { label: "NHS – ghiduri pentru pacienți", url: "https://www.nhs.uk/conditions/" }], content: [
+  const question = topic.endsWith("?") ? topic : `${topic}?`;
+  const publishedAt = `2026-${String(10 - Math.floor(topicIndex / 4)).padStart(2, "0")}-${String(20 - variantIndex).padStart(2, "0")}`;
+  return { slug: `${slugify(topic)}-${variantIndex + 1}`, title: `${question} – ${variant}`, excerpt: intro, category: topicIndex % 2 ? "Prima vizită" : "Ghid medical", publishedAt, dateModified: "2026-11-12", readTime: `${4 + (topicIndex + variantIndex) % 4} min`, coverImage: topicIndex % 2 === 0 ? "/images/blog/proctology-consultation-cover.png" : "/images/blog/proctology-consultation-firefly.jpg", imageAlt: `Ilustrație editorială pentru întrebarea: ${question}`, author: `${site.name} – redacția editorială`, sources: sourceLinks, content: [
     `${topic} este o întrebare frecventă despre ${site.specialty}. Informațiile sunt orientative și te ajută să pregătești o discuție cu un medic specialist.`,
     topicGuidance,
+    variantGuidance[variantIndex],
     `Notează când au apărut simptomele, ce le agravează și ce întrebări ai. Medicul poate interpreta aceste informații împreună cu istoricul tău și poate recomanda următorii pași.`,
     `În timpul consultației, întreabă ce opțiuni există, ce investigații sunt necesare, care sunt beneficiile și riscurile și când trebuie să revii. Nu încerca să stabilești singur un diagnostic pe baza unui articol.`,
     "Nu trimite diagnostice sau rezultate de analize într-un formular general. Pentru simptome severe, agravare rapidă sau o urgență, apelează 112.",

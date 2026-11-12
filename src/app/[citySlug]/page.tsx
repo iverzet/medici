@@ -13,11 +13,13 @@ import { site } from "@/config/site";
 export const revalidate = 300;
 type Props = { params: Promise<{ citySlug: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const city = await getCity((await params).citySlug);
+  const [city, doctors] = await Promise.all([getCity((await params).citySlug), getDoctors()]);
   if (!city) return { title: "Oraș negăsit", robots: { index: false, follow: false } };
   const title = `${site.specialistLabel} și clinici de ${site.specialty} în ${city.cityName}`;
   const description = `Cauți un ${site.singularSpecialistLabel} în ${city.cityName}? Compară profiluri publicate, servicii și modalități de contact pentru ${site.specialty}.`;
-  return pageMetadata(title, description, "/" + city.slug);
+  const hasPublishedProvider = doctors.some((doctor) => !doctor.isDemo && doctor.city === city.cityName);
+  const indexEmptyCity = process.env.INDEX_EMPTY_CITY_PAGES === "true";
+  return pageMetadata(title, description, "/" + city.slug, !hasPublishedProvider && !indexEmptyCity);
 }
 export default async function CityPage({ params, searchParams }: Props) {
   const [{ citySlug }, query, cities, doctors] = await Promise.all([params, searchParams, getCities(), getDoctors()]);

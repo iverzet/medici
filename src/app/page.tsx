@@ -2,7 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, Quote } from "lucide-react";
 import { getCities, getDoctors, demoMode } from "@/lib/catalog";
-import { pageMetadata } from "@/lib/seo";
+import { jsonLd, pageMetadata } from "@/lib/seo";
+import { site } from "@/config/site";
 import { CitySelector } from "@/components/city-selector";
 import { DoctorCard } from "@/components/doctor-card";
 import { LeadForm } from "@/components/lead-form";
@@ -39,6 +40,7 @@ export default async function Home() {
       <section className="pb-16"><p className="eyebrow">Pentru o alegere informată</p><div className="section-heading"><h2 className="section-title">Mai ușor de ales. Mai simplu de înțeles.</h2></div><div className="grid gap-5 md:grid-cols-3">{[["Date publice", "Fiecare profil trimite către sursa furnizorului, pentru verificarea informațiilor publicate."], ["Alegere locală", "Filtrează după oraș și serviciu, apoi compară opțiunile înainte de contact."], ["Cerere confidențială", "Trimite numai datele necesare pentru a fi contactat; nu include informații medicale în formular."]].map(([title, text]) => <article key={title} className="rounded-2xl border bg-white p-6"><Quote className="mb-5 size-6 text-sky-700" aria-hidden="true" /><h3 className="font-semibold">{title}</h3><p className="mt-3 leading-7 text-slate-600">{text}</p></article>)}</div></section>
       <section className="flex flex-wrap items-center justify-between gap-6 rounded-2xl bg-slate-900 p-8 text-white"><div><h2 className="text-2xl font-semibold">Reprezinți o clinică?</h2><p className="mt-2 text-sm text-slate-300">Descoperă modelul de parteneriat Proctologi.ro.</p></div><Link href="/pentru-clinici" className="rounded-lg bg-white px-5 py-3 text-sm font-semibold text-slate-900">Devino partener <ArrowUpRight className="ml-2 inline size-4" aria-hidden="true" /></Link></section>
     </div><MobileContactBar />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd({ "@context": "https://schema.org", "@graph": [{ "@type": "WebSite", name: site.name, url: site.url, inLanguage: "ro-RO", description: site.description }, { "@type": "Organization", name: site.name, url: site.url, email: site.email }] }) }} />
   </main>;
 }
 
