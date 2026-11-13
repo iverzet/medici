@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #f5f8fb;
+  --foreground: #0b1220;
   --card: #ffffff;
-  --card-foreground: #0f172a;
-  --primary: #b4532a;
+  --card-foreground: #0b1220;
+  --primary: #087f8c;
   --primary-foreground: #ffffff;
-  --muted: #f1f5f9;
-  --muted-foreground: #475569;
-  --accent: #f4e8df;
-  --accent-foreground: #8f3d20;
-  --border: #e2e8f0;
-  --input: #cbd5e1;
-  --ring: #b4532a;
+  --muted: #e8f0f3;
+  --muted-foreground: #526273;
+  --accent: #d9f4f1;
+  --accent-foreground: #075e68;
+  --border: #dbe5ea;
+  --input: #c8d7de;
+  --ring: #087f8c;
   --destructive: #b91c1c;
   --radius: 0.75rem;
 }
@@ -44,11 +44,12 @@
 }
 
 @layer components {
-  .site-container { @apply mx-auto w-full max-w-7xl px-5 sm:px-9; }
+  .site-container { @apply mx-auto w-full max-w-[1320px] px-5 sm:px-9; }
   .section-space { @apply py-12 sm:py-16; }
-  .section-title { @apply text-3xl font-semibold leading-tight tracking-tight sm:text-4xl; }
+  .section-title { @apply text-3xl font-semibold leading-[1.08] tracking-[-0.03em] sm:text-4xl; }
   .section-heading { @apply mb-7 mt-3 flex flex-wrap items-end justify-between gap-4; }
-  .eyebrow { @apply text-xs font-semibold uppercase tracking-[0.16em] text-orange-800; }
+  .eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.2em] text-teal-700; }
   .tag { @apply rounded-full px-2.5 py-1 text-[11px] font-semibold; }
-  .field { @apply min-h-11 w-full min-w-40 rounded-lg border border-input bg-white px-3 py-2 text-sm; }
+  .field { @apply min-h-11 w-full min-w-40 rounded-xl border border-input bg-white px-3 py-2 text-sm; }
+  .glass-panel { @apply border border-white/15 bg-white/10 shadow-2xl shadow-slate-950/20 backdrop-blur-xl; }
 }

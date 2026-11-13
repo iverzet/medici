@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import { site } from "@/config/site";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { MobileContactBar } from "@/components/mobile-contact-bar";
 import { CookieConsent } from "@/components/cookie-consent";
 import { GoogleAnalytics } from "@/components/google-analytics";
 import { Analytics } from "@vercel/analytics/next";
@@ -29,11 +30,12 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ro" className={geist.variable}>
-      <body className="min-h-screen bg-background font-sans text-foreground antialiased">
+      <body className="min-h-screen bg-background pb-24 font-sans text-foreground antialiased md:pb-20">
         <a href="#continut" className="sr-only z-50 rounded bg-white p-3 text-primary focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Sari la conținut</a>
         <SiteHeader />
         {children}
         <SiteFooter />
+        <MobileContactBar />
         <CookieConsent />
         <GoogleAnalytics measurementId="G-C9QQRQJTM0" siteName="Proctologi.ro" medical waitForCityChoice />
         <Analytics />
