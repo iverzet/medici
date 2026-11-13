@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, Quote } from "lucide-react";
-import { getCities, getDoctors, demoMode } from "@/lib/catalog";
+import { getCities, getDoctors } from "@/lib/catalog";
 import { jsonLd, pageMetadata } from "@/lib/seo";
 import { site } from "@/config/site";
 import { CitySelector } from "@/components/city-selector";
@@ -16,24 +16,25 @@ export const metadata = pageMetadata("Găsește medici proctologi în orașul t�
 
 export default async function Home() {
   const [cities, doctors] = await Promise.all([getCities(), getDoctors()]);
-  const featured = doctors.filter((doctor) => doctor.isFeatured);
+  const publicDoctors = doctors.filter((doctor) => !doctor.isDemo);
+  const featured = publicDoctors.filter((doctor) => doctor.isFeatured);
   return <main id="continut" className="pb-24 md:pb-0">
     <section className="bg-[#f4e8df] text-[#292522]"><div className="site-container grid gap-8 py-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14 lg:py-16">
       <div className="flex flex-col justify-center"><p className="mb-6 text-xs font-semibold uppercase tracking-[0.18em] text-orange-800">Sănătatea ta merită atenție</p>
         <h1 className="text-4xl font-semibold leading-[1.12] tracking-tight sm:text-5xl lg:text-6xl">Găsește medici proctologi<br /><span className="text-sky-300">în orașul tău.</span></h1>
         <p className="mt-6 max-w-xl text-lg leading-8 text-stone-700">Găsește medici și clinici de proctologie în orașul tău. Compară opțiunile, înțelege serviciile și alege informat.</p>
         <div className="mt-9"><CitySelector cities={cities} /></div>
-        <p className="mt-4 text-xs leading-5 text-stone-600">{cities.length} orașe · {doctors.length} profiluri{demoMode || doctors.some((doctor) => doctor.isDemo) ? " · Catalog cu date demonstrative" : ""}</p>
+        <p className="mt-4 text-xs leading-5 text-stone-600">{cities.length} orașe · {publicDoctors.length} profiluri publicate din surse publice</p>
       </div>
       <div className="relative order-first overflow-hidden rounded-3xl border border-orange-200 bg-[#f4e8df] p-3 text-slate-900 shadow-2xl shadow-orange-950/20 lg:order-last"><Image src="/images/hero-proctology-v2.png" alt="Pacient discutând cu un medic proctolog într-un cabinet discret" width={1536} height={1024} sizes="(max-width: 1023px) 100vw, 50vw" priority className="h-full min-h-80 w-full rounded-2xl object-cover object-top" /><div className="absolute inset-x-8 bottom-8 rounded-xl bg-[#292522]/90 p-5 text-white backdrop-blur-sm"><p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-200">Un început mai simplu</p><p className="mt-2 text-xl font-medium leading-7">Informații clare pentru o conversație importantă.</p></div></div>
     </div></section>
     <div className="site-container">
       <section id="orase" className="section-space scroll-mt-8"><p className="eyebrow">Aproape de tine</p><div className="section-heading"><h2 className="section-title">Orașe populare</h2><p className="text-sm text-slate-500">Pentru toate celelalte localități, folosește harta de mai jos.</p></div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">{cities.slice(0, 5).map((city, index) => <Link key={city.slug} href={"/" + city.slug} className="group rounded-2xl border bg-white p-5 hover:border-sky-500"><div className="mb-8 flex justify-between"><span className="text-xs font-medium text-slate-400">0{index + 1}</span><ArrowUpRight className="size-5 text-sky-700 transition-transform group-hover:-translate-y-1" aria-hidden="true" /></div><h3 className="font-semibold">{city.cityName}</h3><p className="mt-2 text-xs text-slate-500">{doctors.filter((doctor) => doctor.city === city.cityName).length} profiluri în catalog</p></Link>)}</div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">{cities.slice(0, 5).map((city, index) => <Link key={city.slug} href={"/" + city.slug} className="group rounded-2xl border bg-white p-5 hover:border-sky-500"><div className="mb-8 flex justify-between"><span className="text-xs font-medium text-slate-400">0{index + 1}</span><ArrowUpRight className="size-5 text-sky-700 transition-transform group-hover:-translate-y-1" aria-hidden="true" /></div><h3 className="font-semibold">{city.cityName}</h3><p className="mt-2 text-xs text-slate-500">{publicDoctors.filter((doctor) => doctor.city === city.cityName).length} profiluri publicate</p></Link>)}</div>
       </section>
-      <CountyMap cities={cities} doctors={doctors} />
+      <CountyMap cities={cities} doctors={publicDoctors} />
       <section className="pb-16"><p className="eyebrow">Explorează catalogul</p><div className="section-heading"><h2 className="section-title">Medici și clinici recomandate</h2><p className="text-xs text-slate-500">Pozițiile promovate sunt etichetate distinct</p></div>
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">{(featured.length > 0 ? featured : doctors.slice(0, 3)).map((doctor) => <DoctorCard key={doctor.id} doctor={doctor} />)}</div>
+        {publicDoctors.length > 0 ? <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">{(featured.length > 0 ? featured : publicDoctors.slice(0, 3)).map((doctor) => <DoctorCard key={doctor.id} doctor={doctor} />)}</div> : <div className="rounded-2xl border bg-white p-7"><h3 className="text-xl font-semibold">Catalogul se actualizează</h3><p className="mt-3 max-w-2xl leading-7 text-slate-600">Profilurile sunt publicate după verificarea sursei și a datelor de contact. Poți trimite o cerere, iar echipa noastră te poate orienta către o opțiune disponibilă.</p></div>}
       </section>
       <section className="grid gap-10 rounded-3xl bg-sky-50 p-6 sm:p-10 lg:grid-cols-2 lg:items-center"><div><p className="eyebrow">În ritmul tău</p><h2 className="section-title">O cerere simplă.<br />O discuție personală.</h2><p className="mt-6 max-w-md leading-8 text-slate-600">Alege orașul și trimite o cerere de contact. Disponibilitatea și detaliile consultației se confirmă ulterior.</p><ol className="mt-8 space-y-5">{["Alegi orașul și profilul potrivit","Trimiți solicitarea de contact","Confirmi detaliile direct cu partenerul"].map((step,index) => <li key={step} className="flex items-center gap-3 text-sm"><span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white font-semibold text-sky-800">{index+1}</span>{step}</li>)}</ol></div><LeadForm cities={cities.map((city) => city.cityName)} /></section>
       <FAQ />

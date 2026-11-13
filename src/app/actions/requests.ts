@@ -18,7 +18,7 @@ export async function submitLead(input: unknown, meta: unknown): Promise<ActionR
   if (!data.success || !metadata.success || metadata.data.website || !validPreferredDate(data.data.preferredDate)) return invalid;
   const { requestId, doctorId } = metadata.data;
   try {
-    if (demoMode) return { ok: false, message: "Trimiterea este dezactivată în modul demonstrativ." };
+    if (demoMode) return { ok: false, message: "Solicitările sunt disponibile după activarea catalogului public." };
     const db = getDb();
     if (!(await consumeLimit("lead-ip", await requestIdentity(), 10, 900))) return { ok: false, message: "Prea multe solicitări. Te rugăm să revii peste 15 minute." };
     const existing = await db.lead.findUnique({ where: { submissionKey: requestId }, select: { id: true } });
@@ -57,7 +57,7 @@ export async function submitPartnership(input: unknown, meta: unknown): Promise<
   const metadata = submissionSchema.safeParse(meta);
   if (!data.success || !metadata.success || metadata.data.website) return invalid;
   try {
-    if (demoMode) return { ok: false, message: "Trimiterea este dezactivată în modul demonstrativ." };
+    if (demoMode) return { ok: false, message: "Solicitările sunt disponibile după activarea catalogului public." };
     const db = getDb();
     if (!(await consumeLimit("partner-ip", await requestIdentity(), 5, 900))) return { ok: false, message: "Prea multe solicitări. Revino peste 15 minute." };
     const existing = await db.partnershipRequest.findUnique({ where: { submissionKey: metadata.data.requestId } });

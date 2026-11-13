@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
   }
 
   return {
-    rules: { userAgent: "*", allow: "/", disallow: ["/admin", "/medici/demo-"] },
+    rules: { userAgent: "*", allow: "/", disallow: ["/admin"] },
     sitemap: new URL("/sitemap.xml", site.url).href,
     host: site.url,
   };
