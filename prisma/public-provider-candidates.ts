@@ -10,6 +10,8 @@ export type PublicProviderCandidate = {
   services: string[];
 };
 
+import { medlifeProctologyCandidates } from "./medlife-proctology-candidates";
+
 // Every entry is based on a public page controlled by the provider and retains that source link.
 export const publicProviderCandidates: PublicProviderCandidate[] = [
   {
@@ -523,4 +525,5 @@ export const publicProviderCandidates: PublicProviderCandidate[] = [
     location: { city: "Reșița", address: "Strada Făgărașului 8, Reșița", phone: "+40255227830" },
     services: ["Consultație proctologie", "Anuscopie", "Rectosigmoidoscopie"],
   },
+  ...medlifeProctologyCandidates,
 ];

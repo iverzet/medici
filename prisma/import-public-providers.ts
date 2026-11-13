@@ -1,9 +1,11 @@
 import { loadEnvConfig } from "@next/env";
+import dns from "node:dns";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { publicProviderCandidates } from "./public-provider-candidates";
 
 loadEnvConfig(process.cwd());
+dns.setDefaultResultOrder("ipv4first");
 
 const connectionString = process.env.DIRECT_URL || process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL;
 if (!connectionString) throw new Error("Configurează DATABASE_URL înainte de import.");
