@@ -5,7 +5,6 @@ import { Building2, MapPin, Phone, Stethoscope, Star } from "lucide-react";
 import { getCities, getDoctor } from "@/lib/catalog";
 import { jsonLd, pageMetadata, providerSchema } from "@/lib/seo";
 import { LeadForm } from "@/components/lead-form";
-import { MobileContactBar } from "@/components/mobile-contact-bar";
 import { site } from "@/config/site";
 
 export const revalidate = 300;
@@ -34,7 +33,6 @@ export default async function DoctorPage({ params }: Props) {
       </section>
     </div><aside><LeadForm cities={cities.map((item) => item.cityName)} city={doctor.city} doctorName={doctor.name} doctorId={doctor.id} /></aside></div>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd({ "@context": "https://schema.org", ...providerSchema(doctor) }) }} />
-    <MobileContactBar phone={doctor.phone} />
   </main>;
 }
 
