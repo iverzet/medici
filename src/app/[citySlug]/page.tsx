@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `${site.specialistLabel} și clinici de ${site.specialty} în ${city.cityName}`;
   const description = `Cauți un ${site.singularSpecialistLabel} în ${city.cityName}? Compară profiluri publicate, servicii și modalități de contact pentru ${site.specialty}.`;
   const hasPublishedProvider = doctors.some((doctor) => !doctor.isDemo && doctor.city === city.cityName);
-  const indexEmptyCity = process.env.INDEX_EMPTY_CITY_PAGES === "true";
+  const indexEmptyCity = process.env.INDEX_EMPTY_CITY_PAGES !== "false";
   return pageMetadata(title, description, "/" + city.slug, !hasPublishedProvider && !indexEmptyCity);
 }
 export default async function CityPage({ params, searchParams }: Props) {
@@ -50,7 +50,7 @@ export default async function CityPage({ params, searchParams }: Props) {
       <aside><LeadForm cities={cities.map((item) => item.cityName)} city={city.cityName} /></aside>
     </div>
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd({ "@context": "https://schema.org", "@type": "CollectionPage", name: `${site.specialistLabel} și clinici de ${site.specialty} în ${city.cityName}`, url: new URL("/" + city.slug, site.url).href, mainEntity: { "@type": "ItemList", numberOfItems: realDoctors.length, itemListElement: realDoctors.map((doctor,index) => ({ "@type": "ListItem", position: index+1, item: providerSchema(doctor) })) } }) }} />
-    <CitySeoContent cityName={city.cityName} suggestedNames={suggestedCities.map((item) => item.cityName)} />
+    <CitySeoContent cityName={city.cityName} countyCode={city.countyCode} isMunicipality={city.isMunicipality} suggestedNames={suggestedCities.map((item) => item.cityName)} />
     <MobileContactBar />
   </main>;
 }

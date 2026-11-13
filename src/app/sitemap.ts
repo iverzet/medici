@@ -12,7 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/pentru-clinici", changeFrequency: "monthly" as const, priority: 0.5 },
     { path: "/blog", changeFrequency: "weekly" as const, priority: 0.7 },
     ...blogArticles.map((article) => ({ path: `/blog/${article.slug}`, changeFrequency: "monthly" as const, priority: 0.55 })),
-    ...cities.filter((city) => process.env.INDEX_EMPTY_CITY_PAGES === "true" || doctors.some((doctor) => doctor.city === city.cityName && !doctor.isDemo)).map((city) => ({ path: `/${city.slug}`, changeFrequency: "weekly" as const, priority: 0.8 })),
+    ...cities.filter((city) => process.env.INDEX_EMPTY_CITY_PAGES !== "false" || doctors.some((doctor) => doctor.city === city.cityName && !doctor.isDemo)).map((city) => ({ path: `/${city.slug}`, changeFrequency: "weekly" as const, priority: 0.8 })),
     ...doctors.filter((doctor) => !doctor.isDemo).map((doctor) => ({ path: `/medici/${doctor.slug}`, changeFrequency: "monthly" as const, priority: 0.7 })),
   ].map(({ path, changeFrequency, priority }) => ({ url: new URL(path, site.url).href, changeFrequency, priority }));
 }
