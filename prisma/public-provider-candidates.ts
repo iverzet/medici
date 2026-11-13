@@ -11,6 +11,7 @@ export type PublicProviderCandidate = {
 };
 
 import { medlifeProctologyCandidates } from "./medlife-proctology-candidates";
+import { reginaProctologyCandidates } from "./regina-proctology-candidates";
 
 // Every entry is based on a public page controlled by the provider and retains that source link.
 export const publicProviderCandidates: PublicProviderCandidate[] = [
@@ -526,4 +527,5 @@ export const publicProviderCandidates: PublicProviderCandidate[] = [
     services: ["Consultație proctologie", "Anuscopie", "Rectosigmoidoscopie"],
   },
   ...medlifeProctologyCandidates,
+  ...reginaProctologyCandidates,
 ];
