@@ -75,7 +75,7 @@ export function CountyMap({ cities, doctors }: { cities: CatalogCity[]; doctors:
         })[0];
         if (nearest) {
           selectCounty(nearest);
-          setLocationMessage(`Am selectat ${nearest.seat}, cea mai apropiată zonă cu profiluri verificate.`);
+          setLocationMessage(`Am selectat ${nearest.seat}, cea mai apropiată zonă cu profiluri publicate.`);
         } else {
           setLocationMessage("Nu avem încă un municipiu disponibil în apropiere. Alege manual localitatea.");
         }
@@ -165,7 +165,7 @@ export function CountyMap({ cities, doctors }: { cities: CatalogCity[]; doctors:
               </dl>
               {selectedDoctors.length > 0 && <ul className="mt-5 space-y-3">{selectedDoctors.slice(0, 3).map((doctor) => <li key={doctor.id}><Link className="font-medium text-sky-800 hover:underline" href={`/medici/${doctor.slug}`}>{doctor.name}</Link><span className="block text-xs text-slate-500">{doctor.title}</span></li>)}</ul>}
               {selectedCity && selectedDoctors.length > 0 ? <Link href={`/${selectedCity.slug}`} className="mt-6 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">Vezi specialiștii</Link> :
-                <p className="mt-6 rounded-xl bg-slate-50 p-3 text-sm text-slate-600">Nu există încă profiluri verificate în această zonă. Caută un județ apropiat.</p>}
+                <p className="mt-6 rounded-xl bg-slate-50 p-3 text-sm text-slate-600">Nu există încă profiluri publicate în această zonă. Caută un județ apropiat.</p>}
             </div>}
           </aside>
         </div>
