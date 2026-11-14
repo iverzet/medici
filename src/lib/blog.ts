@@ -1,6 +1,7 @@
 import { site } from "@/config/site";
 
-export type BlogArticle = { slug: string; title: string; excerpt: string; category: string; publishedAt: string; dateModified: string; readTime: string; coverImage: string; imageAlt: string; author: string; reviewedBy?: { name: string; title: string; registration: string }; sources: { label: string; url: string }[]; content: string[]; };
+export type ArticleStatus = "pending" | "published";
+export type BlogArticle = { slug: string; title: string; excerpt: string; category: string; publishedAt: string; scheduledFor: string; status: ArticleStatus; medicalReviewStatus: "source-backed" | "needs-review"; dateModified: string; readTime: string; coverImage: string; imageAlt: string; author: string; reviewedBy?: { name: string; title: string; registration: string }; sources: { label: string; url: string }[]; content: string[]; };
 const topics = [
   ["Când este recomandat un consult", "Semnele care merită discutate cu un specialist și cum te pregătești pentru prima vizită."],
   ["Cum te pregătești pentru consultație", "Un checklist simplu pentru o discuție mai clară și mai confortabilă cu medicul."],
@@ -69,8 +70,12 @@ const andrologyTopics = [
   ["Cum influențează fumatul și alcoolul spermograma?", "Stilul de viață poate influența calitatea spermei și sănătatea sexuală.", "Renunțarea la fumat, activitatea fizică și reducerea alcoolului pot fi pași utili, dar nu înlocuiesc evaluarea."],
   ["Când sunt recomandate testele genetice în infertilitate?", "Testarea depinde de concentrația spermatozoizilor, examen și istoricul familial.", "Andrologul poate recomanda cariotip sau microdeleții Y în forme severe, cu consiliere înainte și după rezultat."],
 ] as const;
+void topics;
+void guidance;
 const selectedAdditionalTopics = site.name.startsWith("Proctologi") ? proctologyTopics : andrologyTopics;
-const articleTopics = [...topics.map(([topic, intro], index) => [topic, intro, guidance[index]] as const), ...selectedAdditionalTopics];
+// Only specialty-specific topics are published. This keeps every article useful for
+// the site's intent instead of filling the catalogue with generic templates.
+const articleTopics = selectedAdditionalTopics;
 const variantGuidance = [
   "Pe scurt: informația este un punct de pornire pentru discuția cu specialistul, nu un diagnostic.",
   "Întrebarea merită pusă direct la consultație, împreună cu durata simptomelor și tratamentele încercate.",
@@ -79,13 +84,15 @@ const variantGuidance = [
   "Păstrează articolul ca listă de întrebări și confirmă fiecare recomandare cu un profesionist medical.",
 ] as const;
 const sourceLinks = site.name.startsWith("Proctologi")
-  ? [{ label: "NIDDK – simptome și cauze ale hemoroizilor", url: "https://www.niddk.nih.gov/health-information/digestive-diseases/hemorrhoids/symptoms-causes" }, { label: "NHS – hemoroizi și semne de alarmă", url: "https://www.nhs.uk/conditions/piles-haemorrhoids/" }]
-  : [{ label: "EAU – ghidul pentru infertilitate masculină", url: "https://uroweb.org/guidelines/s%2Axual-and-reproductive-health/chapter/male-infertility" }, { label: "EAU – ghidul pentru hipogonadism masculin", url: "https://uroweb.org/guidelines/sexual-and-reproductive-health/chapter/male-hypogonadism%20" }];
+  ? [{ label: "NIDDK – simptome și cauze ale hemoroizilor", url: "https://www.niddk.nih.gov/health-information/digestive-diseases/hemorrhoids/symptoms-causes" }, { label: "NHS – hemoroizi și semne de alarmă", url: "https://www.nhs.uk/conditions/piles-haemorrhoids/" }, { label: "NHS – fisură anală", url: "https://www.nhs.uk/conditions/anal-fissure/" }, { label: "NHS – fistulă anală", url: "https://www.nhs.uk/conditions/anal-fistula/" }]
+  : [{ label: "EAU – ghidul pentru infertilitate masculină", url: "https://uroweb.org/guidelines/sexual-and-reproductive-health/chapter/male-infertility" }, { label: "EAU – ghidul pentru hipogonadism masculin", url: "https://uroweb.org/guidelines/sexual-and-reproductive-health/chapter/male-hypogonadism" }, { label: "EAU – sănătate sexuală și reproductivă", url: "https://uroweb.org/guidelines/sexual-and-reproductive-health" }, { label: "NHS – disfuncție erectilă", url: "https://www.nhs.uk/conditions/erectile-dysfunction/" }];
 const slugify = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const publishStartDate = process.env.BLOG_PUBLISH_START_DATE || "2026-11-15";
+const addDays = (date: string, days: number) => { const value = new Date(`${date}T00:00:00.000Z`); value.setUTCDate(value.getUTCDate() + days); return value.toISOString().slice(0, 10); };
 export const blogArticles: BlogArticle[] = articleTopics.flatMap(([topic, intro, topicGuidance], topicIndex) => variants.map((variant, variantIndex) => {
   const question = topic.endsWith("?") ? topic : `${topic}?`;
-  const publishedAt = `2026-${String(10 - Math.floor(topicIndex / 4)).padStart(2, "0")}-${String(20 - variantIndex).padStart(2, "0")}`;
-  return { slug: `${slugify(topic)}-${variantIndex + 1}`, title: `${question} – ${variant}`, excerpt: intro, category: topicIndex % 2 ? "Prima vizită" : "Ghid medical", publishedAt, dateModified: "2026-11-12", readTime: `${4 + (topicIndex + variantIndex) % 4} min`, coverImage: topicIndex % 2 === 0 ? "/images/blog/proctology-consultation-cover.png" : "/images/blog/proctology-consultation-firefly.jpg", imageAlt: `Ilustrație editorială pentru întrebarea: ${question}`, author: `${site.name} – redacția editorială`, sources: sourceLinks, content: [
+  const scheduledFor = addDays(publishStartDate, Math.floor((topicIndex * variants.length + variantIndex) / 10));
+  return { slug: `${slugify(topic)}-${variantIndex + 1}`, title: `${question} – ${variant}`, excerpt: intro, category: topicIndex % 2 ? "Prima vizită" : "Ghid medical", publishedAt: scheduledFor, scheduledFor, status: "pending", medicalReviewStatus: "source-backed", dateModified: "2026-11-14", readTime: `${4 + (topicIndex + variantIndex) % 4} min`, coverImage: topicIndex % 2 === 0 ? "/images/blog/proctology-consultation-cover.png" : "/images/blog/proctology-consultation-firefly.jpg", imageAlt: `Ilustrație editorială pentru întrebarea: ${question}`, author: `${site.name} – redacția editorială`, sources: sourceLinks, content: [
     `${topic} este o întrebare frecventă despre ${site.specialty}. Informațiile sunt orientative și te ajută să pregătești o discuție cu un medic specialist.`,
     topicGuidance,
     variantGuidance[variantIndex],
@@ -96,7 +103,11 @@ export const blogArticles: BlogArticle[] = articleTopics.flatMap(([topic, intro,
     `Sursele internaționale de la final oferă informații generale pentru pacienți. Pentru o decizie potrivită situației tale, discută direct cu un specialist în ${site.specialty}.`,
   ] };
 }));
-export function getArticle(slug: string) { return blogArticles.find((article) => article.slug === slug); }
+export function isArticlePublished(article: BlogArticle) { return article.status === "published" || new Date(`${article.scheduledFor}T00:00:00.000Z`) <= new Date(); }
+export const publishedArticles = blogArticles.filter(isArticlePublished);
+export const pendingArticles = blogArticles.filter((article) => !isArticlePublished(article));
+export const publishBatchSize = 10;
+export function getArticle(slug: string) { return publishedArticles.find((article) => article.slug === slug); }
 
 
 

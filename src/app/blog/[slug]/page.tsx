@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
-import { blogArticles, getArticle } from "@/lib/blog";
+import { getArticle } from "@/lib/blog";
 import { jsonLd, pageMetadata } from "@/lib/seo";
 import { site } from "@/config/site";
 import Image from "next/image";
 
-export function generateStaticParams() { return blogArticles.map((article) => ({ slug: article.slug })); }
+export const dynamic = "force-dynamic";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) { const article = getArticle((await params).slug); return article ? pageMetadata(article.title, article.excerpt, `/blog/${article.slug}`) : {}; }
 
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {

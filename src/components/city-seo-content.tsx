@@ -1,6 +1,6 @@
 import { site } from "@/config/site";
 import { COUNTIES } from "@/lib/romania-counties";
-import { blogArticles } from "@/lib/blog";
+import { publishedArticles } from "@/lib/blog";
 
 type Props = { cityName: string; countyCode?: string; isMunicipality?: boolean; suggestedNames: string[] };
 
@@ -8,7 +8,7 @@ export function CitySeoContent({ cityName, countyCode, isMunicipality, suggested
   const nearby = suggestedNames.length > 0 ? suggestedNames.join(", ") : "orașele apropiate disponibile în catalog";
   const county = COUNTIES.find((item) => item.code === countyCode);
   const localityLabel = isMunicipality ? "municipiul" : "orașul";
-  const relatedArticles = blogArticles.slice(0, 3);
+  const relatedArticles = publishedArticles.slice(0, 3);
   const topics = site.name.startsWith("Proctologi")
     ? ["consultație proctologică", "evaluarea simptomelor anorectale", "anoscopie și investigații recomandate de medic"]
     : ["consultație de andrologie", "evaluarea sănătății masculine", "investigații recomandate de medic în funcție de simptome"];
