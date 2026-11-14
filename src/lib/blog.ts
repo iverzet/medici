@@ -86,6 +86,9 @@ const variantGuidance = [
 const sourceLinks = site.name.startsWith("Proctologi")
   ? [{ label: "NIDDK – simptome și cauze ale hemoroizilor", url: "https://www.niddk.nih.gov/health-information/digestive-diseases/hemorrhoids/symptoms-causes" }, { label: "NHS – hemoroizi și semne de alarmă", url: "https://www.nhs.uk/conditions/piles-haemorrhoids/" }, { label: "NHS – fisură anală", url: "https://www.nhs.uk/conditions/anal-fissure/" }, { label: "NHS – fistulă anală", url: "https://www.nhs.uk/conditions/anal-fistula/" }]
   : [{ label: "EAU – ghidul pentru infertilitate masculină", url: "https://uroweb.org/guidelines/sexual-and-reproductive-health/chapter/male-infertility" }, { label: "EAU – ghidul pentru hipogonadism masculin", url: "https://uroweb.org/guidelines/sexual-and-reproductive-health/chapter/male-hypogonadism" }, { label: "EAU – sănătate sexuală și reproductivă", url: "https://uroweb.org/guidelines/sexual-and-reproductive-health" }, { label: "NHS – disfuncție erectilă", url: "https://www.nhs.uk/conditions/erectile-dysfunction/" }];
+const coverImages = site.name.startsWith("Proctologi")
+  ? Array.from({ length: 10 }, (_, index) => `/images/blog/proctology-${String(index + 1).padStart(2, "0")}.png`)
+  : Array.from({ length: 10 }, (_, index) => `/images/blog/andrology-${String(index + 1).padStart(2, "0")}.png`);
 const slugify = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 const publishStartDate = process.env.BLOG_PUBLISH_START_DATE || "2026-11-15";
 const holdPending = process.env.BLOG_HOLD_PENDING === "true";
@@ -93,7 +96,7 @@ const addDays = (date: string, days: number) => { const value = new Date(`${date
 export const blogArticles: BlogArticle[] = articleTopics.flatMap(([topic, intro, topicGuidance], topicIndex) => variants.map((variant, variantIndex) => {
   const question = topic.endsWith("?") ? topic : `${topic}?`;
   const scheduledFor = addDays(publishStartDate, Math.floor((topicIndex * variants.length + variantIndex) / 10));
-  return { slug: `${slugify(topic)}-${variantIndex + 1}`, title: `${question} – ${variant}`, excerpt: intro, category: topicIndex % 2 ? "Prima vizită" : "Ghid medical", publishedAt: scheduledFor, scheduledFor, status: holdPending ? "pending" : "published", medicalReviewStatus: "source-backed", dateModified: "2026-11-14", readTime: `${4 + (topicIndex + variantIndex) % 4} min`, coverImage: topicIndex % 2 === 0 ? "/images/blog/proctology-consultation-cover.png" : "/images/blog/proctology-consultation-firefly.jpg", imageAlt: `Ilustrație editorială pentru întrebarea: ${question}`, author: `${site.name} – redacția editorială`, sources: sourceLinks, content: [
+  return { slug: `${slugify(topic)}-${variantIndex + 1}`, title: `${question} – ${variant}`, excerpt: intro, category: topicIndex % 2 ? "Prima vizită" : "Ghid medical", publishedAt: scheduledFor, scheduledFor, status: holdPending ? "pending" : "published", medicalReviewStatus: "source-backed", dateModified: "2026-11-14", readTime: `${4 + (topicIndex + variantIndex) % 4} min`, coverImage: coverImages[(topicIndex * variants.length + variantIndex) % coverImages.length], imageAlt: `Ilustrație editorială pentru întrebarea: ${question}`, author: `${site.name} – redacția editorială`, sources: sourceLinks, content: [
     `${topic} este o întrebare frecventă despre ${site.specialty}. Informațiile sunt orientative și te ajută să pregătești o discuție cu un medic specialist.`,
     topicGuidance,
     variantGuidance[variantIndex],
