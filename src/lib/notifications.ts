@@ -14,10 +14,28 @@ export async function deliverNotification(id: string) {
   if (claimed.count === 0) return;
   try {
     if (!emailConfigured()) throw new Error("EMAIL_NOT_CONFIGURED");
-    const entry = await db.notification.findUniqueOrThrow({ where: { id }, include: { lead: { include: { doctor: true } }, partnership: true } });
+    const entry = await db.notification.findUniqueOrThrow({ where: { id }, include: { lead: { include: { doctor: true, provider: true } }, partnership: true } });
     const lead = entry.lead;
     const partner = entry.partnership;
-    const text = lead ? ["Cerere nouă de programare", "Referință: " + lead.id] : partner ? ["Cerere nouă de parteneriat", "Referință: " + partner.id] : null;
+    const text = lead ? [
+      "Cerere nouă de programare",
+      "Referință: " + lead.id,
+      "Nume: " + lead.patientName,
+      "Telefon: " + lead.patientPhone,
+      "Email: " + (lead.patientEmail || "—"),
+      "Oraș: " + lead.city,
+      "Furnizor: " + (lead.provider?.name || lead.doctor?.name || "Nespecificat"),
+      "Data preferată: " + (lead.preferredDate?.toISOString().slice(0, 10) || "—"),
+      "Mesaj: " + (lead.message || "—"),
+    ] : partner ? [
+      "Cerere nouă de parteneriat",
+      "Referință: " + partner.id,
+      "Clinică: " + partner.clinicName,
+      "Persoană de contact: " + partner.contactName,
+      "Telefon: " + partner.phone,
+      "Email: " + partner.email,
+      "Oraș: " + partner.city,
+    ] : null;
     if (!text) throw new Error("REQUEST_NOT_FOUND");
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
